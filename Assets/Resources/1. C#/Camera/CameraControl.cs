@@ -1,0 +1,169 @@
+using UnityEngine;
+using System.Collections;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+public class CameraControl : MonoBehaviour
+{
+    [Header("ROTATION SETTINGS")]
+    [SerializeField] private float rotationSpeed = 15f;
+    [SerializeField] private Vector2 horizontalClamp = new Vector2(-30f, 30f);
+    [SerializeField] private Vector2 verticalClamp = new Vector2(-20f, 20f);
+    [SerializeField] private float edgeThreshold = 30f;
+    
+    [Header("ZOOM SETTINGS")]
+    [SerializeField] private float zoomSpeed = 2f;
+    [SerializeField] private Vector2 zoomClamp = new Vector2(-15f, 15f);
+    
+    [Header("DEPTH OF FIELD")]
+    [SerializeField] private Volume postProcessVolume;
+    [SerializeField] private float blurAmount = 15f;
+    [SerializeField] private float blurDuration = 0.15f;
+    [SerializeField] private float refocusDuration = 0.3f;
+    
+    [Header("INPUT")]
+    [SerializeField] private string zoomAxis = "Mouse ScrollWheel";
+
+    [Header("REFERENCES")]
+    [SerializeField] private Camera thisCam;
+    
+    private Vector3 originalRotation;
+    private float originalFOV;
+    private float originalFocusDistance;
+    
+    private float targetX = 0f;
+    private float targetY = 0f;
+    private float accumulatedZoom = 0f;
+    private float currentX = 0f;
+    private float currentY = 0f;
+    
+    private DepthOfField dof;
+    private bool hasDOF;
+    private Coroutine activeZoomCoroutine;
+    private bool isZooming = false;
+    
+    void Start(){
+        originalRotation = transform.eulerAngles;
+        originalFOV = thisCam.fieldOfView;
+        
+        thisCam.fieldOfView = originalFOV;
+        transform.eulerAngles = originalRotation;
+        
+        targetX = 0f;
+        targetY = 0f;
+        currentX = 0f;
+        currentY = 0f;
+        accumulatedZoom = 0f;
+        
+        if(postProcessVolume != null && postProcessVolume.profile.TryGet<DepthOfField>(out dof)){
+            hasDOF = true;
+            originalFocusDistance = dof.focusDistance.value;
+            dof.focusDistance.value = originalFocusDistance;
+        }
+    }
+    
+    void Update(){
+        HandleEdgeBasedRotation();
+        HandleZoom();
+        ApplyRotation();
+    }
+    
+    void HandleEdgeBasedRotation(){
+        Vector2 mousePos = Input.mousePosition;
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+        
+        float targetSpeedX = 0f;
+        float targetSpeedY = 0f;
+        
+        if(mousePos.x < edgeThreshold) targetSpeedX = -1f;
+        else if(mousePos.x > screenWidth - edgeThreshold) targetSpeedX = 1f;
+        
+        if(mousePos.y < edgeThreshold) targetSpeedY = -1f;
+        else if(mousePos.y > screenHeight - edgeThreshold) targetSpeedY = 1f;
+        
+        targetX -= targetSpeedY * rotationSpeed * Time.deltaTime;
+        targetY += targetSpeedX * rotationSpeed * Time.deltaTime;
+        
+        targetX = Mathf.Clamp(targetX, verticalClamp.x, verticalClamp.y);
+        targetY = Mathf.Clamp(targetY, horizontalClamp.x, horizontalClamp.y);
+        
+        currentX = Mathf.Lerp(currentX, targetX, Time.deltaTime * 5f);
+        currentY = Mathf.Lerp(currentY, targetY, Time.deltaTime * 5f);
+    }
+    
+    void ApplyRotation(){
+        transform.eulerAngles = new Vector3(
+            originalRotation.x + currentX,
+            originalRotation.y + currentY,
+            originalRotation.z
+        );
+    }
+    
+    void HandleZoom(){
+        float scroll = Input.GetAxis(zoomAxis);
+        
+        if(Mathf.Abs(scroll) > 0.01f){
+            float newZoom = accumulatedZoom - scroll * zoomSpeed;
+            newZoom = Mathf.Clamp(newZoom, zoomClamp.x, zoomClamp.y);
+            
+            bool isAtMinZoom = (scroll > 0 && newZoom >= zoomClamp.x && accumulatedZoom == zoomClamp.x);
+            bool isAtMaxZoom = (scroll < 0 && newZoom <= zoomClamp.y && accumulatedZoom == zoomClamp.y);
+            
+            if(isAtMinZoom || isAtMaxZoom) return;
+            accumulatedZoom = newZoom;
+            thisCam.fieldOfView = originalFOV + accumulatedZoom;
+            
+            if(!isZooming){
+                if(activeZoomCoroutine != null) StopCoroutine(activeZoomCoroutine);
+                activeZoomCoroutine = StartCoroutine(BlurThenRefocus());
+            }
+        }
+    }
+    
+    IEnumerator BlurThenRefocus(){
+        if(!hasDOF) yield break;
+        
+        isZooming = true;
+        
+        float targetFocus = originalFocusDistance;
+        
+        dof.focusDistance.value = originalFocusDistance - blurAmount;
+        yield return new WaitForSeconds(blurDuration);
+        
+        float elapsed = 0f;
+        float startFocus = dof.focusDistance.value;
+        
+        while(elapsed < refocusDuration){
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / refocusDuration);
+            t = Mathf.SmoothStep(0f, 1f, t);
+            dof.focusDistance.value = Mathf.Lerp(startFocus, targetFocus, t);
+            yield return null;
+        }
+        
+        dof.focusDistance.value = targetFocus;
+        activeZoomCoroutine = null;
+        isZooming = false;
+    }
+    
+    public void ResetCamera(){
+        if(activeZoomCoroutine != null){
+            StopCoroutine(activeZoomCoroutine);
+            activeZoomCoroutine = null;
+        }
+        
+        isZooming = false;
+        
+        targetX = 0f;
+        targetY = 0f;
+        currentX = 0f;
+        currentY = 0f;
+        accumulatedZoom = 0f;
+        
+        thisCam.fieldOfView = originalFOV;
+        transform.eulerAngles = originalRotation;
+        
+        if(hasDOF) dof.focusDistance.value = originalFocusDistance;
+    }
+}
