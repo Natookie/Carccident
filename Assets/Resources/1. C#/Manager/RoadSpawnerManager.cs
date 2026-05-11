@@ -172,7 +172,7 @@ public class RoadSpawnerManager : MonoBehaviour
         CreateAllStopAreas();
         AutoAssignToCarManager();
         BuildLaneMapping();
-        Debug.Log("=== Setup Complete! ===");
+        Debug.Log("=== Setup Complete ===");
     }
     
     void ClearAll(){

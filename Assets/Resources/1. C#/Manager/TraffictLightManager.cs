@@ -60,14 +60,14 @@ public class TrafficLightManager : MonoBehaviour
 
         if(!isRightClick){
             if(currentActiveDirection == clickedDirection){
-                Debug.Log($"{clickedDirection} already active!");
+                //Debug.Log($"{clickedDirection} already active!");
                 return;
             }
             StartCoroutine(SwitchToDirection(clickedDirection));
         }
         else{
             if(currentActiveDirection != clickedDirection){
-                Debug.Log($"Cannot enable left turn. {clickedDirection} is not active. Current active: {currentActiveDirection}");
+                //Debug.Log($"Cannot enable left turn. {clickedDirection} is not active. Current active: {currentActiveDirection}");
                 return;
             }
             ToggleLeftTurn(clickedDirection);
