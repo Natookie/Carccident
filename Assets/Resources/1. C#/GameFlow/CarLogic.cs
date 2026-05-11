@@ -1,3 +1,5 @@
+#pragma warning disable 0414
+
 using UnityEngine;
 using NaughtyAttributes;
 
@@ -17,7 +19,6 @@ public class CarLogic : MonoBehaviour
     [SerializeField] private float decelerationVariation = 2f;
 
     [Header("TURNING SETTINGS")]
-    [SerializeField] private float turnThreshold = 3f;
     [SerializeField] private float turnSpeed = 5f;
     [SerializeField] private float turnSpeedVariation = 1.5f;
     [Space(5)]
@@ -728,3 +729,5 @@ public class CarLogic : MonoBehaviour
         }
     }
 }
+
+#pragma warning restore 0414
