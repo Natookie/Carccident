@@ -73,3 +73,5 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/GitIgnored/carrcident-localization-727730b766a5.json
+Assets/GitIgnored/carrcident-localization-727730b766a5.json.meta
