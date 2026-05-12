@@ -46,6 +46,7 @@ public class CarManager : MonoBehaviour
     private Queue<CarLogic> carPool = new Queue<CarLogic>();
     private float spawnTimer = 0f;
     private int nextCarID = 0;
+    private float cachedRoadY = 0f;
     
     private int selectedDebugIndex = -1;
     private string[] debugOptions = new string[]{
@@ -70,8 +71,9 @@ public class CarManager : MonoBehaviour
     }
     
     void Start(){
-        for(int i = 0; i < 15; i++) CreateNewCarAndAddToPool();
+        for(int i = 0; i < 200; i++) CreateNewCarAndAddToPool();
         spawnTimer = GetCurrentSpawnInterval();
+        cachedRoadY = (northSouthRoad.bounds.max.y + eastWestRoad.bounds.max.y) / 2f;
         
         if(showDebug) InitializeDebugSpawnPoints();
     }
@@ -296,8 +298,5 @@ public class CarManager : MonoBehaviour
         return maxActiveCars;
     }
     
-    Vector3 GetSpawnPositionOnRoad(Vector3 originalPosition){
-        float roadY = northSouthRoad.bounds.max.y + eastWestRoad.bounds.max.y / 2f;
-        return new Vector3(originalPosition.x, roadY + spawnHeightOffset, originalPosition.z);
-    }
+    Vector3 GetSpawnPositionOnRoad(Vector3 originalPosition) => new Vector3(originalPosition.x, cachedRoadY + spawnHeightOffset, originalPosition.z);
 }

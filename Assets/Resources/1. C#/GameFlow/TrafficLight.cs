@@ -36,14 +36,7 @@ public class TrafficLight : MonoBehaviour
 
         SetRed();
     }
-    
-    void OnMouseDown(){
-        if(manager != null){
-            bool isRightClick = Input.GetMouseButtonDown(1);
-            manager.OnTrafficLightClicked(this, isRightClick);
-        }
-    }
-    
+
     public void SetGreen(){
         isGreen = true;
         if(lightRenderer != null && manager != null) 
@@ -64,4 +57,6 @@ public class TrafficLight : MonoBehaviour
     public bool IsGreen() => isGreen;
     public int GetLightID() => lightID;
     public RoadDirection GetRoadDirection() => roadDirection;
+
+    void OnMouseDown() => TrafficUI.Instance.ShowPrompt(this);
 }

@@ -12,7 +12,7 @@ public class TrafficLightManager : MonoBehaviour
     public Material yellowMaterial;
 
     [Header("TIMING")]
-    public float yellowLightDuration = 2f;
+    public float yellowLightDuration = 0.3f;
 
     [Header("TRAFFIC LIGHTS")]
     [SerializeField] private TrafficLight northLight;
@@ -20,16 +20,29 @@ public class TrafficLightManager : MonoBehaviour
     [SerializeField] private TrafficLight eastLight;
     [SerializeField] private TrafficLight westLight;
 
-    [Header("LEFT TURN STATUS")]
-    [ReadOnly] public bool northLeftActive = false;
-    [ReadOnly] public bool southLeftActive = false;
-    [ReadOnly] public bool eastLeftActive = false;
-    [ReadOnly] public bool westLeftActive = false;
+    [System.Serializable]
+    public class LaneStatus
+    {
+        public bool straightActive = false;
+        public bool rightActive = false;
+    }
+
+    [Header("LANE STATUS")]
+    [SerializeField] private LaneStatus north = new LaneStatus();
+    [SerializeField] private LaneStatus south = new LaneStatus();
+    [SerializeField] private LaneStatus east = new LaneStatus();
+    [SerializeField] private LaneStatus west = new LaneStatus();
 
     [SerializeField] private bool testAllLanesGreen = false;
+    
+    public enum ClickType
+    {
+        Straight,
+        Right,
+        Pedestrian
+    }
 
-    private TrafficLight.RoadDirection currentActiveDirection = TrafficLight.RoadDirection.East;
-    private bool isChangingPhase = false;
+    private bool isBlinking = false;
 
     void Awake(){
         if(Instance != null && Instance != this){
@@ -39,142 +52,118 @@ public class TrafficLightManager : MonoBehaviour
         Instance = this;
     }
 
-
-    IEnumerator Start(){
-        yield return null;
-        currentActiveDirection = TrafficLight.RoadDirection.North;
-        SetDirectionGreen(currentActiveDirection);
+    void Start(){
+        if(redMaterial == null) Debug.LogError("Red material not assigned!");
+        if(greenMaterial == null) Debug.LogError("Green material not assigned!");
+        if(yellowMaterial == null) Debug.LogError("Yellow material not assigned!");
 
         if(testAllLanesGreen){
-            northLeftActive = true;
-            southLeftActive = true;
-            eastLeftActive = true;
-            westLeftActive = true;
+            north.straightActive = true;
+            north.rightActive = true;
+            south.straightActive = true;
+            south.rightActive = true;
+            east.straightActive = true;
+            east.rightActive = true;
+            west.straightActive = true;
+            west.rightActive = true;
         }
+        
+        UpdateAllLights();
     }
 
-    public void OnTrafficLightClicked(TrafficLight clickedLight, bool isRightClick){
-        if(isChangingPhase) return;
+    public void OnTrafficLightClicked(TrafficLight clickedLight, ClickType clickType){
+        if(isBlinking) return;
 
         TrafficLight.RoadDirection clickedDirection = clickedLight.GetRoadDirection();
-
-        if(!isRightClick){
-            if(currentActiveDirection == clickedDirection){
-                //Debug.Log($"{clickedDirection} already active!");
-                return;
-            }
-            StartCoroutine(SwitchToDirection(clickedDirection));
+        switch(clickType){
+            case ClickType.Straight:
+                ToggleStraight(clickedDirection);
+                break;
+            case ClickType.Right:
+                ToggleRightTurn(clickedDirection);
+                break;
+            case ClickType.Pedestrian:
+                Debug.Log("Pedestrian");
+                break;
         }
-        else{
-            if(currentActiveDirection != clickedDirection){
-                //Debug.Log($"Cannot enable left turn. {clickedDirection} is not active. Current active: {currentActiveDirection}");
-                return;
-            }
-            ToggleLeftTurn(clickedDirection);
-        }
+        
+        LaneStatus lane = GetLaneStatus(clickedDirection);
+        TrafficUI.Instance.UpdateUI(lane);
+        StartCoroutine(BlinkThenUpdate(clickedDirection));
     }
 
-    void ToggleLeftTurn(TrafficLight.RoadDirection direction){
+    void ToggleStraight(TrafficLight.RoadDirection direction){
+        LaneStatus lane = GetLaneStatus(direction);
+        if(lane != null) lane.straightActive = !lane.straightActive;
+    }
+
+    void ToggleRightTurn(TrafficLight.RoadDirection direction){
+        LaneStatus lane = GetLaneStatus(direction);
+        if(lane != null) lane.rightActive = !lane.rightActive;
+    }
+
+    public LaneStatus GetLaneStatus(TrafficLight.RoadDirection direction){
         switch(direction){
-            case TrafficLight.RoadDirection.North: northLeftActive = !northLeftActive; break;
-            case TrafficLight.RoadDirection.South: southLeftActive = !southLeftActive; break;
-            case TrafficLight.RoadDirection.East: eastLeftActive = !eastLeftActive; break;
-            case TrafficLight.RoadDirection.West: westLeftActive = !westLeftActive; break;
+            case TrafficLight.RoadDirection.North: return north;
+            case TrafficLight.RoadDirection.South: return south;
+            case TrafficLight.RoadDirection.East: return east;
+            case TrafficLight.RoadDirection.West: return west;
+            default: return null;
         }
-
-        RefreshLight(direction);
     }
 
-    void RefreshLight(TrafficLight.RoadDirection direction){
-        StartCoroutine(BlinkYellow(direction));
-    }
-
-    IEnumerator BlinkYellow(TrafficLight.RoadDirection direction){
-        SetDirectionYellow(direction);
-        yield return new WaitForSeconds(0.3f);
-        SetDirectionGreen(direction);
-    }
-
-    IEnumerator SwitchToDirection(TrafficLight.RoadDirection targetDirection){
-        isChangingPhase = true;
-
-        SetDirectionYellow(currentActiveDirection);
-        yield return new WaitForSeconds(yellowLightDuration);
-
-        SetAllRed();
-        ResetLeftTurnStatus(currentActiveDirection);
-        SetDirectionGreen(targetDirection);
-        currentActiveDirection = targetDirection;
-
-        isChangingPhase = false;
-        Debug.Log($"Switched to {targetDirection}");
-    }
-
-    void ResetLeftTurnStatus(TrafficLight.RoadDirection direction){
+    TrafficLight GetLightByDirection(TrafficLight.RoadDirection direction){
         switch(direction){
-            case TrafficLight.RoadDirection.North: northLeftActive = false; break;
-            case TrafficLight.RoadDirection.South: southLeftActive = false; break;
-            case TrafficLight.RoadDirection.East: eastLeftActive = false; break;
-            case TrafficLight.RoadDirection.West: westLeftActive = false; break;
+            case TrafficLight.RoadDirection.North: return northLight;
+            case TrafficLight.RoadDirection.South: return southLight;
+            case TrafficLight.RoadDirection.East: return eastLight;
+            case TrafficLight.RoadDirection.West: return westLight;
+            default: return null;
         }
     }
 
-    void SetDirectionGreen(TrafficLight.RoadDirection direction){
-        SetAllRed();
-        switch(direction){
-            case TrafficLight.RoadDirection.North:
-                if(northLight != null) northLight.SetGreen();
-                break;
-            case TrafficLight.RoadDirection.South:
-                if(southLight != null) southLight.SetGreen();
-                break;
-            case TrafficLight.RoadDirection.East:
-                if(eastLight != null) eastLight.SetGreen();
-                break;
-            case TrafficLight.RoadDirection.West:
-                if(westLight != null) westLight.SetGreen();
-                break;
+    IEnumerator BlinkThenUpdate(TrafficLight.RoadDirection direction){
+        isBlinking = true;
+        
+        TrafficLight targetLight = GetLightByDirection(direction);
+        if(targetLight != null){
+            targetLight.SetYellow();
+            yield return new WaitForSeconds(yellowLightDuration);
         }
+        
+        UpdateLight(direction);
+        isBlinking = false;
     }
 
-    void SetDirectionYellow(TrafficLight.RoadDirection direction){
-        switch(direction){
-            case TrafficLight.RoadDirection.North:
-                if(northLight != null && northLight.IsGreen()) northLight.SetYellow();
-                break;
-            case TrafficLight.RoadDirection.South:
-                if(southLight != null && southLight.IsGreen()) southLight.SetYellow();
-                break;
-            case TrafficLight.RoadDirection.East:
-                if(eastLight != null && eastLight.IsGreen()) eastLight.SetYellow();
-                break;
-            case TrafficLight.RoadDirection.West:
-                if(westLight != null && westLight.IsGreen()) westLight.SetYellow();
-                break;
-        }
+    void UpdateLight(TrafficLight.RoadDirection direction){
+        LaneStatus lane = GetLaneStatus(direction);
+        TrafficLight targetLight = GetLightByDirection(direction);
+        if(lane == null || targetLight == null) return;
+        
+        if(lane.straightActive || lane.rightActive) targetLight.SetGreen();
+        else targetLight.SetRed();
     }
 
-    void SetAllRed(){
-        if(northLight != null) northLight.SetRed();
-        if(southLight != null) southLight.SetRed();
-        if(eastLight != null) eastLight.SetRed();
-        if(westLight != null) westLight.SetRed();
+    void UpdateAllLights(){
+        UpdateLight(TrafficLight.RoadDirection.North);
+        UpdateLight(TrafficLight.RoadDirection.South);
+        UpdateLight(TrafficLight.RoadDirection.East);
+        UpdateLight(TrafficLight.RoadDirection.West);
     }
 
     public bool IsLaneGreen(int laneID){
         if(testAllLanesGreen) return true;
 
         switch(laneID){
-            case 0: return currentActiveDirection == TrafficLight.RoadDirection.North && northLeftActive;
-            case 1: return currentActiveDirection == TrafficLight.RoadDirection.North;
-            case 2: return currentActiveDirection == TrafficLight.RoadDirection.South && southLeftActive;
-            case 3: return currentActiveDirection == TrafficLight.RoadDirection.South;
-            case 4: return currentActiveDirection == TrafficLight.RoadDirection.East && eastLeftActive;
-            case 5: return currentActiveDirection == TrafficLight.RoadDirection.East;
-            case 6: return currentActiveDirection == TrafficLight.RoadDirection.West && westLeftActive;
-            case 7: return currentActiveDirection == TrafficLight.RoadDirection.West;
-            default:
-                return false;
+            case 0: return north.rightActive;
+            case 1: return north.straightActive;
+            case 2: return south.rightActive;
+            case 3: return south.straightActive;
+            case 4: return east.rightActive;
+            case 5: return east.straightActive;
+            case 6: return west.rightActive;
+            case 7: return west.straightActive;
+            default: return false;
         }
     }
 }

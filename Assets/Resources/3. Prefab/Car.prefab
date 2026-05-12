@@ -160,7 +160,6 @@ MonoBehaviour:
   accelerationVariation: 3
   decelerationRate: 20
   decelerationVariation: 4
-  turnThreshold: 7
   turnSpeed: 55
   turnSpeedVariation: 0.5
   exitOffset: 12
@@ -176,6 +175,8 @@ MonoBehaviour:
   closeZoneDistance: 6
   knockUpForce: 8
   disableCollisionDuration: 2
+  patientTimer: 0
+  patienceThreshold: 2
   carID: 0
   laneID: 0
   turnIntent: 0
