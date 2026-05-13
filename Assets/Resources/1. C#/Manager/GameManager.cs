@@ -1,13 +1,22 @@
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
-    [ReadOnly] public float score = 0f;
+    [Header("STATUS")]
+    [ReadOnly] public int carPassed;
+    [ReadOnly] public int  carCollided;
+
+    [Header("STATE")]
+    [ReadOnly] public bool isGameInitialized = false;
+    [ReadOnly] public bool isGameOver = false;
 
     [Header("REFERENCES")]
-    public ScoreUI scoreUI;
+    [SerializeField] ScoreUI scoreUI;
+
+    private float shiftTime;
 
     void Awake(){
         if(Instance != null && Instance != this){
@@ -17,19 +26,31 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    void Start(){
+        isGameInitialized = true;
+    }
+
     void Update(){
-        HandleScore();
+        shiftTime += Time.deltaTime;
     }
 
-    void HandleScore(){
-        score += Time.deltaTime;
-        scoreUI.ChangeScore(score);
-    }
+    #region TRAFFIC STATUS
+    public void OnAccident() => carCollided++;
+    public void OnCarPassed() => carPassed++;
+    #endregion
 
-    public void OnAccident(int carID1, int carID2){
-        score = Mathf.Max(0, score - 5f);
-        //scoreUI.ShowAccidentFeedback();
+    #region GAME STATE LOGIC
+    public void GameOver(){
+        if(isGameOver) return;
+        isGameOver = true;
+
+        scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
+        //Save high score to txt
+        //Display Main menu
+
+
     }
-    
-    public float GetCurrentShiftTime() => score;
+    #endregion
+
+    public float GetCurrentShiftTime() => shiftTime;
 }

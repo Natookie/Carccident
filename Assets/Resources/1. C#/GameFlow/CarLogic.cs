@@ -270,8 +270,9 @@ public class CarLogic : MonoBehaviour
         distanceTraveled += Vector3.Distance(transform.position, lastPosition);
         lastPosition = transform.position;
 
-        if(distanceTraveled > roadLength*2){
+        if(distanceTraveled > roadLength + 20f){
             ReturnToPool();
+            GameManager.Instance.OnCarPassed();
             return;
         }
 
@@ -769,6 +770,8 @@ public class CarLogic : MonoBehaviour
 
             currentSpeed = 0;
             otherCar.currentSpeed = 0;
+
+            GameManager.Instance.OnAccident();
         }
     }
 

@@ -11,6 +11,13 @@ public class CameraControl : MonoBehaviour
     [SerializeField] private Vector2 verticalClamp = new Vector2(-20f, 20f);
     [SerializeField] private float edgeThreshold = 30f;
     
+    [Header("KEYBOARD MOVEMENT")]
+    [SerializeField] private float keyboardRotationSpeed = 25f;
+    [SerializeField] private KeyCode moveLeft = KeyCode.A;
+    [SerializeField] private KeyCode moveRight = KeyCode.D;
+    [SerializeField] private KeyCode moveUp = KeyCode.W;
+    [SerializeField] private KeyCode moveDown = KeyCode.S;
+    
     [Header("ZOOM SETTINGS")]
     [SerializeField] private float zoomSpeed = 2f;
     [SerializeField] private Vector2 zoomClamp = new Vector2(-15f, 15f);
@@ -63,27 +70,53 @@ public class CameraControl : MonoBehaviour
     }
     
     void Update(){
-        HandleEdgeBasedRotation();
-        HandleZoom();
-        ApplyRotation();
+        if(GameManager.Instance.isGameInitialized){
+            HandleInput();
+            HandleZoom();
+            ApplyRotation();
+        }
     }
     
-    void HandleEdgeBasedRotation(){
-        Vector2 mousePos = Input.mousePosition;
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
-        
+    void HandleInput(){
         float targetSpeedX = 0f;
         float targetSpeedY = 0f;
         
-        if(mousePos.x < edgeThreshold) targetSpeedX = -1f;
-        else if(mousePos.x > screenWidth - edgeThreshold) targetSpeedX = 1f;
+        bool hasKeyboardInput = false;
         
-        if(mousePos.y < edgeThreshold) targetSpeedY = -1f;
-        else if(mousePos.y > screenHeight - edgeThreshold) targetSpeedY = 1f;
+        if(Input.GetKey(moveLeft)){
+            targetSpeedX = -1f;
+            hasKeyboardInput = true;
+        }
+        else if(Input.GetKey(moveRight)){
+            targetSpeedX = 1f;
+            hasKeyboardInput = true;
+        }
         
-        targetX -= targetSpeedY * rotationSpeed * Time.deltaTime;
-        targetY += targetSpeedX * rotationSpeed * Time.deltaTime;
+        if(Input.GetKey(moveDown)){
+            targetSpeedY = -1f;
+            hasKeyboardInput = true;
+        }
+        else if(Input.GetKey(moveUp)){
+            targetSpeedY = 1f;
+            hasKeyboardInput = true;
+        }
+        
+        if(!hasKeyboardInput){
+            Vector2 mousePos = Input.mousePosition;
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+            
+            if(mousePos.x < edgeThreshold) targetSpeedX = -1f;
+            else if(mousePos.x > screenWidth - edgeThreshold) targetSpeedX = 1f;
+            
+            if(mousePos.y < edgeThreshold) targetSpeedY = -1f;
+            else if(mousePos.y > screenHeight - edgeThreshold) targetSpeedY = 1f;
+        }
+        
+        float currentRotSpeed = hasKeyboardInput ? keyboardRotationSpeed : rotationSpeed;
+        
+        targetX -= targetSpeedY * currentRotSpeed * Time.deltaTime;
+        targetY += targetSpeedX * currentRotSpeed * Time.deltaTime;
         
         targetX = Mathf.Clamp(targetX, verticalClamp.x, verticalClamp.y);
         targetY = Mathf.Clamp(targetY, horizontalClamp.x, horizontalClamp.y);
