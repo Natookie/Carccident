@@ -553,7 +553,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 214.5
+        Raw: 175.5
         Type: 0
       Z:
         Raw: 0
@@ -563,7 +563,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 250
+        Raw: 178.5
         Type: 0
       Z:
         Raw: 0
@@ -1262,10 +1262,10 @@ MonoBehaviour:
   layout:
     Size:
       X:
-        Raw: 101.6
+        Raw: 8
         Type: 0
       Y:
-        Raw: 28.279999
+        Raw: 8
         Type: 0
       Z:
         Raw: 0
@@ -1275,7 +1275,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 362.63998
+        Raw: 342.36
         Type: 0
       Z:
         Raw: 0
@@ -3263,10 +3263,10 @@ MonoBehaviour:
   layout:
     Size:
       X:
-        Raw: 101.6
+        Raw: 8
         Type: 0
       Y:
-        Raw: 28.279999
+        Raw: 8
         Type: 0
       Z:
         Raw: 0
@@ -4622,7 +4622,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 195
+        Raw: 123.5
         Type: 0
       Z:
         Raw: 0
@@ -8094,10 +8094,10 @@ MonoBehaviour:
   layout:
     Size:
       X:
-        Raw: 101.6
+        Raw: 8
         Type: 0
       Y:
-        Raw: 28.279999
+        Raw: 8
         Type: 0
       Z:
         Raw: 0
@@ -8107,7 +8107,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 611.16
+        Raw: 509.75998
         Type: 0
       Z:
         Raw: 0
@@ -12668,7 +12668,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 108.5
+        Raw: 37
         Type: 0
       Z:
         Raw: 0
@@ -19833,7 +19833,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 222
+        Raw: 105
         Type: 0
       Y:
         Raw: 0
@@ -21322,7 +21322,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 42.500004
+        Raw: 10
         Type: 0
       Z:
         Raw: 0
@@ -35092,7 +35092,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 154.5
+        Raw: 115.5
         Type: 0
       Z:
         Raw: 0
@@ -38503,7 +38503,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 214.5
+        Raw: 143
         Type: 0
       Z:
         Raw: 0
@@ -38513,7 +38513,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 519.5
+        Raw: 409
         Type: 0
       Z:
         Raw: 0
@@ -40416,7 +40416,7 @@ MonoBehaviour:
         Raw: 0.82
         Type: 1
       Y:
-        Raw: 214.5
+        Raw: 143
         Type: 0
       Z:
         Raw: 0
@@ -41590,7 +41590,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 135
+        Raw: 63.5
         Type: 0
       Z:
         Raw: 0
@@ -43539,7 +43539,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 127
+        Raw: 410.91998
         Type: 0
       Z:
         Raw: -0
@@ -44773,7 +44773,7 @@ MonoBehaviour:
   layout:
     Size:
       X:
-        Raw: 355.9623
+        Raw: 30
         Type: 0
       Y:
         Raw: 1
@@ -45812,7 +45812,7 @@ MonoBehaviour:
         Raw: 0.82
         Type: 1
       Y:
-        Raw: 195
+        Raw: 123.5
         Type: 0
       Z:
         Raw: 0
@@ -47510,6 +47510,17 @@ MonoBehaviour:
   isGameInitialized: 0
   isGameOver: 0
   scoreUI: {fileID: 596332756}
+  currentStamina: 0
+  maxStamina: 0
+  baseStamina: 100
+  staminaPerLevel: 10
+  staminaDrainPerSecond: 1
+  maxCollision: 3
+  timeBonusDivider: 10
+  baseMoneyMultiplier: 3
+  baseCollisionPenalty: 5
+  finalScore: 0
+  finalPrize: 0
 --- !u!1 &1200194855
 GameObject:
   m_ObjectHideFlags: 0
@@ -47570,7 +47581,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 346
+        Raw: 229
         Type: 0
       Y:
         Raw: 0
@@ -54094,7 +54105,7 @@ MonoBehaviour:
   layout:
     Size:
       X:
-        Raw: 355.9623
+        Raw: 30
         Type: 0
       Y:
         Raw: 1
@@ -54104,7 +54115,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 804.9844
+        Raw: 967.9655
         Type: 0
       Y:
         Raw: 0
@@ -56658,7 +56669,7 @@ MonoBehaviour:
         Raw: 0.82
         Type: 1
       Y:
-        Raw: 214.5
+        Raw: 175.5
         Type: 0
       Z:
         Raw: 0
@@ -73047,7 +73058,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 154.5
+        Raw: 83
         Type: 0
       Z:
         Raw: 0
@@ -74632,7 +74643,7 @@ MonoBehaviour:
         Raw: 1
         Type: 1
       Y:
-        Raw: 42.500004
+        Raw: 10
         Type: 0
       Z:
         Raw: 0
@@ -74935,7 +74946,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 497.03998
+        Raw: 456.47998
         Type: 0
       Z:
         Raw: 0
@@ -80370,7 +80381,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 108.5
+        Raw: 37
         Type: 0
       Z:
         Raw: 0
@@ -81089,7 +81100,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 137
+        Raw: 20
         Type: 0
       Y:
         Raw: 0

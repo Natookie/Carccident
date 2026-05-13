@@ -7,11 +7,6 @@ public class GameManager : MonoBehaviour
     [Header("STATUS")]
     [ReadOnly] public int carPassed;
     [ReadOnly] public int  carCollided;
-    public static GameManager Instance { get; private set; }
-
-    [Header("STATUS")]
-    [ReadOnly] public int carPassed;
-    [ReadOnly] public int carCollided;
 
     [Header("STATE")]
     [ReadOnly] public bool isGameInitialized = false;
@@ -40,9 +35,6 @@ public class GameManager : MonoBehaviour
     [ReadOnly] public int finalScore;
     [ReadOnly] public int finalPrize;
 
-    [Header("REFERENCES")]
-    [SerializeField] private ScoreUI scoreUI;
-
     private float shiftTime;
 
     void Awake(){
@@ -54,14 +46,17 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    void Update(){
-        shiftTime += Time.deltaTime;
+    void Start(){
+        SetupStamina();
+        isGameInitialized = false;
     }
 
-    #region TRAFFIC STATUS
-    public void OnAccident() => carCollided++;
-    public void OnCarPassed() => carPassed++;
-    #endregion
+    void Update(){
+        if(!isGameInitialized || isGameOver) return;
+
+        shiftTime += Time.deltaTime;
+        DrainStamina();
+    }
 
     #region GAME STATE LOGIC
     public void PlayGame(){
@@ -69,94 +64,24 @@ public class GameManager : MonoBehaviour
         Debug.Log("duh");
     }
 
-    public void GameOver(){
+    public void OnAccident(){
         if(isGameOver) return;
-        isGameOver = true;
-
-        scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
-        //Save high score to txt
-        //Display Main menu
-    }
-
-    public void ExitGame(){
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
-            Application.Quit();
-        #endif
-    }
-    #endregion
-
-    public float GetCurrentShiftTime() => shiftTime;
-        
-    private void Start(){
-        SetupStamina();
-        isGameInitialized = false;
-    }
-
-    private void Update()
-    {
-        HandleScore();
-        if(!isGameInitialized || isGameOver) return;
-
-        shiftTime += Time.deltaTime;
-        DrainStamina();
-    }
-
-    private void SetupStamina()
-    {
-        int staminaLevel = SaveManager.GetStaminaLevel();
-
-        maxStamina = baseStamina + (staminaLevel * staminaPerLevel);
-        currentStamina = maxStamina;
-    }
-
-    private void DrainStamina()
-    {
-        currentStamina -= staminaDrainPerSecond * Time.deltaTime;
-
-        if (currentStamina <= 0)
-        {
-            currentStamina = 0;
-            GameOver();
-        }
-    }
-
-    public void OnAccident()
-    {
-        if (isGameOver) return;
 
         carCollided++;
-
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlayCrash();
-        }
-
-        if (carCollided >= maxCollision)
-        {
-            GameOver();
-        }
+        if(AudioManager.Instance != null) AudioManager.Instance.PlayCrash();
+        if(carCollided >= maxCollision) GameOver();
     }
 
-    public void OnCarPassed()
-    {
-        if (isGameOver) return;
-
+    public void OnCarPassed(){
+        if(isGameOver) return;
         carPassed++;
-
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlayCarPass();
-        }
+        if(AudioManager.Instance != null) AudioManager.Instance.PlayCarPass();
     }
 
-    public void GameOver()
-    {
-        if (isGameOver) return;
+    public void GameOver(){
+        if(isGameOver) return;
 
-        isGameOver = true;
-
+        scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
         CalculateReward();
 
         SaveManager.AddMoney(finalPrize);
@@ -165,15 +90,8 @@ public class GameManager : MonoBehaviour
         SaveManager.AddTotalCarsPassed(carPassed);
         SaveManager.AddTotalCollisions(carCollided);
 
-        if (scoreUI != null)
-        {
-            scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
-        }
-
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlayGameOver();
-        }
+        if(scoreUI != null) scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
+        if(AudioManager.Instance != null) AudioManager.Instance.PlayGameOver();
 
         Debug.Log("Game Over");
         Debug.Log("Cars Passed This Run: " + carPassed);
@@ -184,8 +102,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Total Collisions: " + SaveManager.GetTotalCollisions());
     }
 
-    private void CalculateReward()
-    {
+    void CalculateReward(){
         int timeBonus = Mathf.FloorToInt(shiftTime / timeBonusDivider);
         float charismaMultiplier = GetCharismaMultiplier();
 
@@ -200,15 +117,12 @@ public class GameManager : MonoBehaviour
         finalPrize = Mathf.Max(0, finalPrize);
     }
 
-    private float GetCharismaMultiplier()
-    {
+    float GetCharismaMultiplier(){
         int charismaLevel = SaveManager.GetCharismaLevel();
-
         return 1f + (charismaLevel * 0.05f);
     }
 
-    private int GetFinalCollisionPenalty()
-    {
+    int GetFinalCollisionPenalty(){
         int enduranceLevel = SaveManager.GetEnduranceLevel();
 
         float reduction = Mathf.Min(enduranceLevel * 0.02f, 0.6f);
@@ -217,18 +131,33 @@ public class GameManager : MonoBehaviour
         return Mathf.RoundToInt(finalPenalty);
     }
 
-    public float GetCurrentShiftTime()
-    {
-        return shiftTime;
+    public void ExitGame(){
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+    #endregion
+
+
+    void SetupStamina(){
+        int staminaLevel = SaveManager.GetStaminaLevel();
+
+        maxStamina = baseStamina + (staminaLevel * staminaPerLevel);
+        currentStamina = maxStamina;
     }
 
-    public float GetCurrentStamina()
-    {
-        return currentStamina;
+    void DrainStamina(){
+        currentStamina -= staminaDrainPerSecond * Time.deltaTime;
+
+        if(currentStamina <= 0){
+            currentStamina = 0;
+            GameOver();
+        }
     }
 
-    public float GetMaxStamina()
-    {
-        return maxStamina;
-    }
+    public float GetCurrentStamina() => currentStamina;
+    public float GetMaxStamina() => maxStamina;
+    public float GetCurrentShiftTime() => shiftTime;
 }
