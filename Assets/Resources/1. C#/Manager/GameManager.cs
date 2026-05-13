@@ -1,6 +1,5 @@
 using UnityEngine;
 using NaughtyAttributes;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,7 +26,7 @@ public class GameManager : MonoBehaviour
     }
 
     void Start(){
-        isGameInitialized = true;
+        isGameInitialized = false;
     }
 
     void Update(){
@@ -40,6 +39,11 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region GAME STATE LOGIC
+    public void PlayGame(){
+        isGameInitialized = true;
+        Debug.Log("duh");
+    }
+
     public void GameOver(){
         if(isGameOver) return;
         isGameOver = true;
@@ -47,8 +51,14 @@ public class GameManager : MonoBehaviour
         scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
         //Save high score to txt
         //Display Main menu
+    }
 
-
+    public void ExitGame(){
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
     }
     #endregion
 

@@ -52,7 +52,7 @@ public class ScoreUI : MonoBehaviour
         }
         
         string dateFormatted = now.ToString("dd-MM-yy");
-        timeText.Text = $"{dateFormatted} - {displayHour:D2}:{now.Minute:D2} {ampm}";
+        timeText.Text = $"({dateFormatted}) {displayHour:D2}:{now.Minute:D2}:{now.Second:D2} {ampm}";
     }
 
     public void DisplayScore(float elapsed, float accidentCounter, float passedCounter){
