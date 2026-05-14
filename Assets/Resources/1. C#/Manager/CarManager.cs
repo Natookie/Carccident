@@ -71,7 +71,7 @@ public class CarManager : MonoBehaviour
     }
     
     void Start(){
-        for(int i = 0; i < 200; i++) CreateNewCarAndAddToPool();
+        for(int i = 0; i < 2; i++) CreateNewCarAndAddToPool();
         spawnTimer = GetCurrentSpawnInterval();
         cachedRoadY = (northSouthRoad.bounds.max.y + eastWestRoad.bounds.max.y) / 2f;
         
@@ -98,7 +98,8 @@ public class CarManager : MonoBehaviour
     
     void Update(){
         if(showDebug) HandleDebugInput();
-        
+        if(GameManager.Instance.isGameOver) return;
+
         if(spawnTimer <= 0f){
             if(activeCars.Count < GetCurrentMaxCars()){
                 SpawnRandomCar();

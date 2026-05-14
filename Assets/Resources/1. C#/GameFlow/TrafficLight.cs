@@ -58,5 +58,8 @@ public class TrafficLight : MonoBehaviour
     public int GetLightID() => lightID;
     public RoadDirection GetRoadDirection() => roadDirection;
 
-    void OnMouseDown() => TrafficUI.Instance.ShowPrompt(this);
+    void OnMouseDown(){
+        if(GameManager.Instance.isGameInitialized) return;
+        TrafficUI.Instance.ShowPrompt(this);
+    }
 }

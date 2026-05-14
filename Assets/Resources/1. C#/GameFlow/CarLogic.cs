@@ -36,8 +36,9 @@ public class CarLogic : MonoBehaviour
     [SerializeField] private float closeZoneDistance = 6f;
 
     [Header("COLLISION")]
-    [SerializeField] private float knockUpForce = 8f;
-    [SerializeField] private float disableCollisionDuration = 2f;
+    [SerializeField] private float knockUpForce = 12f;
+    [SerializeField] private float knockBackForce = 15f;
+    [SerializeField] private float despawnDelay = 1f;
 
     [Header("PATIENT SETTINGS")]
     [SerializeField] private float patientTimer = 0f;
@@ -77,6 +78,7 @@ public class CarLogic : MonoBehaviour
     [Header("REFERENCES")]
     [ReadOnly] public Transform turnTarget;
     [ReadOnly] public Transform stopArea;
+    [ReadOnly] public Transform visualTransform;
 
     private CarManager carManager;
     private TrafficLightManager trafficManager;
@@ -115,6 +117,9 @@ public class CarLogic : MonoBehaviour
     private CarLogic cachedCarAhead = null;
     private Color originalColor;
 
+    private Coroutine currentRageCoroutine;
+    private Coroutine currentDespawnCoroutine;
+
     private float brakingNoise = 0f;
     private float brakingNoiseTimer = 0f;
     private const float BRAKING_NOISE_INTERVAL = 0.15f;
@@ -142,51 +147,32 @@ public class CarLogic : MonoBehaviour
         turnTarget = target;
         stopArea = stop;
         transform.position = startPos;
-        currentSpeed = 0f;
-        isStopped = true;
-        isWaitingForGreen = false;
-        hasPassedLight = false;
-        distanceTraveled = 0f;
         lastPosition = startPos;
-        isTurning = false;
-        hasReachedTurnPoint = false;
-        turnProgress = 0f;
-        isCollisionDisabled = false;
-        collisionDisableTimer = 0f;
-
-        pendingStopDecision = false;
-        bufferedShouldStop = false;
-        reactionTimer = 0f;
-        isHesitating = false;
-        hesitationTimer = 0f;
-        hesitationDuration = 0f;
-        brakingNoise = 0f;
-        brakingNoiseTimer = 0f;
-        cachedDistanceToCarAhead = NO_OBSTACLE;
-        cachedCarAhead = null;
-
-        if(carCollider != null) carCollider.enabled = true;
-
+        
+        ResetAllStates();
+        
         InitializeComponent();
         InitializeActualValue();
-        ResetCarState();
-
+        
         SetMovementDirection();
         SetLayer();
+        
+        transform.rotation = GetRotationForLane(laneID);
     }
 
     void InitializeActualValue(){
         actualMaxSpeed = speed + Random.Range(-speedVariation, speedVariation);
-        actualMaxSpeed = Mathf.Max(15f, actualMaxSpeed);
         actualAcceleration = accelerationRate + Random.Range(-accelerationVariation, accelerationVariation);
-        actualAcceleration = Mathf.Max(3f, actualAcceleration);
         actualDeceleration = decelerationRate + Random.Range(-decelerationVariation, decelerationVariation);
-        actualDeceleration = Mathf.Max(4f, actualDeceleration);
         actualReactionTime = reactionTime + Random.Range(-reactionTimeVariation, reactionTimeVariation);
-        actualReactionTime = Mathf.Max(0.3f, actualReactionTime);
         actualTurnSpeed = turnSpeed + Random.Range(-turnSpeedVariation, turnSpeedVariation);
-        actualTurnSpeed = Mathf.Max(3f, actualTurnSpeed);
         actualFollowDistance = minFollowDistance + Random.Range(-followDistanceVariation, followDistanceVariation);
+        
+        actualMaxSpeed = Mathf.Max(15f, actualMaxSpeed);
+        actualAcceleration = Mathf.Max(3f, actualAcceleration);
+        actualDeceleration = Mathf.Max(4f, actualDeceleration);
+        actualReactionTime = Mathf.Max(0.3f, actualReactionTime);
+        actualTurnSpeed = Mathf.Max(3f, actualTurnSpeed);
         actualFollowDistance = Mathf.Max(2f, actualFollowDistance);
     }
 
@@ -197,11 +183,10 @@ public class CarLogic : MonoBehaviour
         carCollider = GetComponent<Collider>();
         if(carCollider == null) carCollider = gameObject.AddComponent<BoxCollider>();
 
-        carRenderer = GetComponent<Renderer>();
-        if(carRenderer == null) carRenderer = gameObject.AddComponent<Renderer>();
+        visualTransform = transform.GetChild(0);
+        carRenderer = visualTransform.GetComponent<Renderer>();
         
         rb.isKinematic = false;
-        rb.useGravity = false;
         originalColor = carRenderer.material.color;
     }
 
@@ -217,10 +202,82 @@ public class CarLogic : MonoBehaviour
         obstacleLayerMask = (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9);
     }
 
-    void ResetCarState(){
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        transform.rotation = GetRotationForLane(laneID);
+    void ResetAllStates(){
+        //Movement states
+        currentSpeed = 0f;
+        isStopped = true;
+        isWaitingForGreen = false;
+        hasPassedLight = false;
+        distanceTraveled = 0f;
+        lastPosition = Vector3.zero;
+        
+        //Turn states
+        isTurning = false;
+        hasReachedTurnPoint = false;
+        turnProgress = 0f;
+        turnStartPoint = Vector3.zero;
+        turnControlPoint = Vector3.zero;
+        turnEndPoint = Vector3.zero;
+        turnFinalDestination = Vector3.zero;
+        
+        //Rage/Patient states
+        patientTimer = 0f;
+        isRoadRage = false;
+        hasRaged = false;
+        isAligningAfterTurn = false;
+        isAligningAfterRage = false;
+        
+        //Collision states
+        isCollisionDisabled = false;
+        collisionDisableTimer = 0f;
+        
+        //Perception states
+        cachedDistanceToCarAhead = NO_OBSTACLE;
+        cachedCarAhead = null;
+        
+        //Hesitation states
+        isHesitating = false;
+        hesitationTimer = 0f;
+        hesitationDuration = 0f;
+        
+        //Reaction states
+        pendingStopDecision = false;
+        bufferedShouldStop = false;
+        reactionTimer = 0f;
+        
+        //Braking states
+        brakingNoise = 0f;
+        brakingNoiseTimer = 0f;
+        
+        //Visual states
+        if(visualTransform != null){
+            visualTransform.localPosition = Vector3.zero;
+            visualTransform.localRotation = Quaternion.identity;
+        }
+        
+        //Rigidbody states
+        if(rb != null){
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        
+        //Collider states
+        if(carCollider != null) carCollider.enabled = true;
+        
+        //Renderer states
+        if(carRenderer != null) carRenderer.material.color = originalColor;
+
+        //Clear coroutine references
+        if(currentRageCoroutine != null){
+            StopCoroutine(currentRageCoroutine);
+            currentRageCoroutine = null;
+        }
+        
+        if(currentDespawnCoroutine != null){
+            StopCoroutine(currentDespawnCoroutine);
+            currentDespawnCoroutine = null;
+        }
     }
 
     void SetMovementDirection(){
@@ -267,18 +324,18 @@ public class CarLogic : MonoBehaviour
 
     #region UPDATE LOOP
     void Update(){
-        distanceTraveled += Vector3.Distance(transform.position, lastPosition);
+        if(!isStopped) distanceTraveled += Vector3.Distance(transform.position, lastPosition);
         lastPosition = transform.position;
 
-        if(distanceTraveled > roadLength + 20f){
+        if(distanceTraveled > roadLength * 2){
             ReturnToPool();
             GameManager.Instance.OnCarPassed();
             return;
         }
 
         UpdatePerceptionCache();
-
-        if(turnIntent == TurnIntent.Right && turnTarget != null){
+        
+        if(turnIntent == TurnIntent.Right && turnTarget != null && !isCollisionDisabled && !isRoadRage){
             if(!hasReachedTurnPoint) HandleTurning();
             if(isTurning) UpdateTurn();
         }
@@ -502,7 +559,7 @@ public class CarLogic : MonoBehaviour
 
     #region TURNING
     void HandleTurning(){
-        if(turnIntent == TurnIntent.Right){
+        if(turnIntent == TurnIntent.Right && !hasRaged){
             bool isRightAllowed = trafficManager != null && trafficManager.IsLaneGreen(laneID);
             if(!isRightAllowed) return;
         }
@@ -527,13 +584,17 @@ public class CarLogic : MonoBehaviour
         isTurning = true;
         hasReachedTurnPoint = true;
         rb.isKinematic = true;
-        
+
         currentSpeed = Mathf.Min(currentSpeed, 5f);
+        //Debug.Log($"Car {carID}: Turn START - DistanceTraveled: {distanceTraveled:F2}", this);
+
+        Vector3 turnCenter = turnTarget.position;
+        Vector3 turnDirection = GetTurnDirection();
         
-        Vector3 turnExit = GetTurnExitPoint();
+        Vector3 turnExit = GetTurnExitPoint(turnCenter, turnDirection);
+        Vector3 apex = GetTurnApexPoint(turnCenter, turnDirection);
         Vector3 finalDest = GetFinalDestination();
-        Vector3 apex = GetTurnApexPoint();
-        
+
         turnStartPoint = transform.position;
         turnControlPoint = apex;
         turnEndPoint = turnExit;
@@ -545,22 +606,32 @@ public class CarLogic : MonoBehaviour
         actualTurnSpeed = 1f / turnDuration;
     }
 
-    Vector3 GetTurnExitPoint(){
-        float yPos = transform.position.y;
-        float tx = turnTarget.position.x;
-        float tz = turnTarget.position.z;
-        float exitOffsetVal = exitOffset;
-        
-        int baseID = laneID & ~1;
-        switch(baseID){
-            case 0: return new Vector3(tx - exitOffsetVal, yPos, Mathf.Abs(tx));
-            case 2: return new Vector3(tx + exitOffsetVal, yPos, -Mathf.Abs(tx));
-            case 4: return new Vector3(Mathf.Abs(tz), yPos, tz + exitOffsetVal);
-            case 6: return new Vector3(-Mathf.Abs(tz), yPos, tz - exitOffsetVal);
-            default: return turnTarget.position;
-        }
+    Vector3 GetTurnDirection(){
+        if(originalMoveDirection == Vector3.forward) return Vector3.right;   //Turning right from south lane = east
+        if(originalMoveDirection == Vector3.back) return Vector3.left;       //Turning right from north lane = west
+        if(originalMoveDirection == Vector3.right) return Vector3.back;      //Turning right from west lane = south
+        if(originalMoveDirection == Vector3.left) return Vector3.forward;    //Turning right from east lane = north
+        return originalMoveDirection;
     }
 
+    Vector3 GetTurnExitPoint(Vector3 center, Vector3 exitDirection){
+        Vector3 exitPoint = center + exitDirection * exitOffset;
+        Vector3 finalDest = GetFinalDestination();
+        
+        if(exitDirection == Vector3.right) exitPoint.z = finalDest.z;
+        if(exitDirection == Vector3.left) exitPoint.z = finalDest.z;
+        if(exitDirection == Vector3.forward) exitPoint.x = finalDest.x;
+        if(exitDirection == Vector3.back) exitPoint.x = finalDest.x;
+        
+        exitPoint.y = transform.position.y;
+        return exitPoint;
+    }
+    Vector3 GetTurnApexPoint(Vector3 center, Vector3 exitDirection){
+        Vector3 startDirection = originalMoveDirection;
+        Vector3 cornerPoint = center + startDirection * bezierOffset + exitDirection * bezierOffset;
+        cornerPoint.y = transform.position.y;
+        return cornerPoint;
+    }
     Vector3 GetFinalDestination(){
         Transform spawnPoint = GetSpawnPointFromLaneID();
         
@@ -579,23 +650,9 @@ public class CarLogic : MonoBehaviour
         }
     }
 
-    Vector3 GetTurnApexPoint(){
-        float yPos = transform.position.y;
-        float offset = bezierOffset;
-        
-        int baseID = laneID & ~1;
-        switch(baseID){
-            case 0: return new Vector3(turnTarget.position.x - offset, yPos, turnTarget.position.z - offset);
-            case 2: return new Vector3(turnTarget.position.x + offset, yPos, turnTarget.position.z + offset);
-            case 4: return new Vector3(turnTarget.position.x + offset, yPos, turnTarget.position.z + offset);
-            case 6: return new Vector3(turnTarget.position.x - offset, yPos, turnTarget.position.z - offset);
-            default: return turnTarget.position;
-        }
-    }
-
     void UpdateTurn(){
         turnProgress += Time.deltaTime * actualTurnSpeed;
-        
+
         if(turnProgress >= 1f){
             transform.position = turnEndPoint;
             
@@ -693,34 +750,61 @@ public class CarLogic : MonoBehaviour
             return;
         }
         
-        float shakeIntensity = Mathf.Sin(Time.time * 20f) * (fill * 0.05f);
-        Vector3 shakePos = transform.position;
-        shakePos.x += Random.Range(-shakeIntensity, shakeIntensity) * 0.01f;
-        shakePos.z += Random.Range(-shakeIntensity, shakeIntensity) * 0.01f;
-        transform.position = shakePos;
-        
-        float tiltAngle = Mathf.Sin(Time.time * 15f) * (fill * 3f);
-        transform.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, tiltAngle);
+        if(visualTransform != null){
+            float shakeIntensity = Mathf.Sin(Time.time * 20f) * (fill * 0.05f);
+            float shakeX = Random.Range(-shakeIntensity, shakeIntensity) * 0.01f;
+            float shakeZ = Random.Range(-shakeIntensity, shakeIntensity) * 0.01f;
+            visualTransform.localPosition = new Vector3(shakeX, 0, shakeZ);
+            
+            float tiltAngle = Mathf.Sin(Time.time * 15f) * (fill * 3f);
+            visualTransform.localRotation = Quaternion.Euler(0f, 0f, tiltAngle);
+        }
     }
 
-    void ResetPatient() => patientTimer = 0f;
+    void ResetPatient(){
+        patientTimer = 0f;
+        if(visualTransform != null){
+            visualTransform.localPosition = Vector3.zero;
+            visualTransform.localRotation = Quaternion.identity;
+        }
+    }
+    
     void TriggerRoadRage(){
+        if(currentRageCoroutine != null){
+            StopCoroutine(currentRageCoroutine);
+            currentRageCoroutine = null;
+        }
+
         ResetPatient();
         isRoadRage = true;
+        hasRaged = true;
         isStopped = false;
         isWaitingForGreen = false;
         rb.linearVelocity = Vector3.zero;
-        StartCoroutine(RoadRageCoroutine());
+
+        if(turnIntent == TurnIntent.Right){
+            isTurning = false;
+            hasReachedTurnPoint = false;
+            turnProgress = 0f;
+        }
+
+        currentRageCoroutine = StartCoroutine(RoadRageCoroutine());
     }
 
     IEnumerator RoadRageCoroutine(){
+        if(visualTransform == null){
+            currentRageCoroutine = null;
+            yield break;
+        }
+        
         float rageDuration = 2f;
         float elapsed = 0f;
         
-        Quaternion originalRotation = transform.rotation;
-        float originalY = transform.eulerAngles.y;
+        float originalY = visualTransform.eulerAngles.y;
         
         while(elapsed < rageDuration){
+            if(this == null || gameObject == null) yield break;
+            
             elapsed += Time.deltaTime;
             float t = elapsed / rageDuration;
             
@@ -731,63 +815,181 @@ public class CarLogic : MonoBehaviour
             float rotY = Mathf.Sin(Time.time * 8f) * (3f * (1f - t));
             float finalY = originalY + rotY;
             
-            transform.rotation = Quaternion.Euler(rotX, finalY, rotZ);
-            
+            visualTransform.rotation = Quaternion.Euler(rotX, finalY, rotZ);
             yield return null;
         }
         
         if(carRenderer != null) carRenderer.material.color = originalColor;
         isRoadRage = false;
-        hasRaged = true;
-        isAligningAfterRage = true;
-        targetLaneRotation = GetRotationForLane(laneID);
+        
+        if(visualTransform != null) visualTransform.localRotation = Quaternion.identity;
+        if(turnIntent == TurnIntent.Straight){
+            targetLaneRotation = GetRotationForLane(laneID);
+            isAligningAfterRage = true;
+        }
+        
+        currentRageCoroutine = null;
     }
     #endregion
 
     #region COLLISION
-    void OnCollisionEnter(Collision collision){
-        CarLogic otherCar = collision.collider.GetComponent<CarLogic>();
+    bool IsHitFromSide(CarLogic victim, CarLogic hitter){
+        if(victim == null || hitter == null) return false;
+        
+        Vector3 victimForward = victim.transform.forward;
+        Vector3 hitDirection = (victim.transform.position - hitter.transform.position).normalized;
+        
+        float forwardDot = Vector3.Dot(victimForward, hitDirection);
+        float rightDot = Vector3.Dot(victim.transform.right, hitDirection);
+        
+        bool isSideHit = Mathf.Abs(rightDot) > Mathf.Abs(forwardDot);
+        
+        return isSideHit;
+    }
 
-        if(otherCar != null && !isCollisionDisabled && !otherCar.isCollisionDisabled){
-            bool sameRoad = IsSameRoad(otherCar);
+    void OnTriggerEnter(Collider other){
+        CarLogic otherCar = other.GetComponent<CarLogic>();
+        if(otherCar == null) return;
+        if(isCollisionDisabled || otherCar.isCollisionDisabled) return;
+        
+        bool sameRoad = IsSameRoad(otherCar);
+        if(sameRoad) return;
 
-            if(sameRoad) return;
+        if(GetInstanceID() > otherCar.GetInstanceID()) return;
+        ProcessCollision(this, otherCar);
+    }
 
-            Vector3 knockUpDirection = Vector3.up * knockUpForce;
-
-            rb.AddForce(knockUpDirection, ForceMode.Impulse);
-            otherCar.rb.AddForce(knockUpDirection, ForceMode.Impulse);
-
-            isCollisionDisabled = true;
-            collisionDisableTimer = disableCollisionDuration;
-            if(carCollider != null) carCollider.enabled = false;
-
-            otherCar.isCollisionDisabled = true;
-            otherCar.collisionDisableTimer = disableCollisionDuration;
-            if(otherCar.carCollider != null) otherCar.carCollider.enabled = false;
-
-            Debug.Log($"Car {carID} (Lane {laneID}) collided with Car {otherCar.carID} (Lane {otherCar.laneID})");
-
-            currentSpeed = 0;
-            otherCar.currentSpeed = 0;
-
+    void ProcessCollision(CarLogic carA, CarLogic carB){
+        bool isAVictim = IsHitFromSide(carA, carB);
+        bool isBVictim = IsHitFromSide(carB, carA);
+        
+        if(isAVictim && isBVictim){
+            ApplyKnockback(carA, carB);
+            ApplyKnockback(carB, carA);
             GameManager.Instance.OnAccident();
+            return;
         }
+        
+        if(isAVictim && !isBVictim){
+            ApplyKnockback(carA, carB);
+            GameManager.Instance.OnAccident();
+            return;
+        }
+        
+        if(!isAVictim && isBVictim){
+            ApplyKnockback(carB, carA);
+            GameManager.Instance.OnAccident();
+            return;
+        }
+        
+        GameManager.Instance.OnAccident();
+    }
+
+    void ApplyKnockback(CarLogic victim, CarLogic hitter)
+    {
+        if(victim == null || hitter == null) return;
+        if(victim.rb == null || hitter.rb == null) return;
+
+        Rigidbody victimRB = victim.rb;
+        Rigidbody hitterRB = hitter.rb;
+
+        victim.currentSpeed = 0f;
+        victim.isStopped = true;
+        victim.isTurning = false;
+        victim.isWaitingForGreen = false;
+
+        victimRB.isKinematic = false;
+        victimRB.useGravity = true;
+
+        if(victim.carCollider != null) victim.carCollider.enabled = false;
+        
+        victimRB.mass = 1.2f;
+        victimRB.linearDamping = 0.25f;
+        victimRB.angularDamping = 0.15f;
+
+        victimRB.linearVelocity = Vector3.zero;
+        victimRB.angularVelocity = Vector3.zero;
+
+        Vector3 relativeVelocity = hitterRB.linearVelocity - victimRB.linearVelocity;
+        float impactSpeed = relativeVelocity.magnitude;
+
+        if(impactSpeed < 2f){
+            relativeVelocity = hitter.transform.forward * 8f;
+            impactSpeed = relativeVelocity.magnitude;
+        }
+
+        Vector3 impactDirection = relativeVelocity.normalized;
+        float sideDot = Vector3.Dot(
+            victim.transform.right,
+            impactDirection
+        );
+
+        float sideAmount = Mathf.Abs(sideDot);
+
+        float baseForce = Mathf.Clamp(impactSpeed * 2.5f, 10f, 45f);
+        float sideBonus = Mathf.Lerp(1f, 1.8f, sideAmount);
+        float finalForce = baseForce * sideBonus;
+
+        float upwardMultiplier = Mathf.Lerp(0.35f, 1.4f, sideAmount);
+        Vector3 horizontalForce = impactDirection * finalForce;
+        Vector3 upwardForce = Vector3.up * (finalForce * upwardMultiplier);
+
+        Vector3 randomForce =
+            new Vector3(
+                Random.Range(-2f, 2f),
+                Random.Range(0f, 1.5f),
+                Random.Range(-2f, 2f)
+            );
+
+        Vector3 totalForce = horizontalForce + upwardForce + randomForce;
+        victimRB.AddForce(totalForce, ForceMode.Impulse);
+
+        float spinDirection =Mathf.Sign(sideDot);
+        float torqueStrength = Mathf.Clamp(finalForce * 1.1f, 8f, 40f);
+        victimRB.AddTorque(Vector3.up * torqueStrength * spinDirection, ForceMode.Impulse);
+
+        Vector3 tumbleTorque =
+            new Vector3(
+                Random.Range(-1f, 1f),
+                Random.Range(-0.3f, 0.3f),
+                Random.Range(-1f, 1f)
+            ).normalized;
+
+        victimRB.AddTorque(tumbleTorque * torqueStrength * 0.7f, ForceMode.Impulse);
+        if(sideAmount > 0.75f) victimRB.AddTorque(victim.transform.forward * Random.Range(-25f, 25f), ForceMode.Impulse);
+
+        victimRB.AddForce(Vector3.up * Random.Range(2f, 6f), ForceMode.Impulse);
+        victim.StartCoroutine(victim.DelayedDespawn());
+    }
+
+    IEnumerator DelayedDespawn(){
+        yield return new WaitForSeconds(despawnDelay);
+        if(this != null && gameObject != null) ReturnToPool();
     }
 
     bool IsSameRoad(CarLogic otherCar){
+        if(otherCar == null) return false;
         int baseID = laneID & ~1;
-        switch(baseID){
-            case 0: return otherCar.laneID == 0 || otherCar.laneID == 1;
-            case 2: return otherCar.laneID == 2 || otherCar.laneID == 3;
-            case 4: return otherCar.laneID == 4 || otherCar.laneID == 5;
-            case 6: return otherCar.laneID == 6 || otherCar.laneID == 7;
-            default: return false;
-        }
+        int otherBaseID = otherCar.laneID & ~1;
+        
+        return baseID == otherBaseID;
     }
     #endregion
 
     void ReturnToPool(){
+        if(currentRageCoroutine != null){
+            StopCoroutine(currentRageCoroutine);
+            currentRageCoroutine = null;
+        }
+        
+        if(currentDespawnCoroutine != null){
+            StopCoroutine(currentDespawnCoroutine);
+            currentDespawnCoroutine = null;
+        }
+        
+        StopAllCoroutines();
+        ResetAllStates();
+        
         if(carManager != null) carManager.ReturnCarToPool(this);
         else Destroy(gameObject);
     }
@@ -812,6 +1014,25 @@ public class CarLogic : MonoBehaviour
         if(stopArea != null){
             Gizmos.color = Color.white;
             Gizmos.DrawWireCube(stopArea.position, new Vector3(3f, 0.5f, 1f));
+        }
+    }
+
+    void OnDrawGizmos(){
+        if(!Application.isPlaying) return;
+        
+        if(isTurning){
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(turnStartPoint, 0.5f);
+            
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(turnControlPoint, 0.5f);
+            
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(turnEndPoint, 0.5f);
+            
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(turnStartPoint, turnControlPoint);
+            Gizmos.DrawLine(turnControlPoint, turnEndPoint);
         }
     }
 }

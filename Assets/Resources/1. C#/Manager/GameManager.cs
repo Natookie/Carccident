@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     #region GAME STATE LOGIC
     public void PlayGame(){
         isGameInitialized = true;
-        Debug.Log("duh");
+        HUDUI.Instance.HideAllMenuUI();
     }
 
     public void OnAccident(){
@@ -69,17 +69,19 @@ public class GameManager : MonoBehaviour
 
         carCollided++;
         if(AudioManager.Instance != null) AudioManager.Instance.PlayCrash();
-        if(carCollided >= maxCollision) GameOver();
+        //if(carCollided >= maxCollision) GameOver();
     }
 
     public void OnCarPassed(){
         if(isGameOver) return;
+
         carPassed++;
         if(AudioManager.Instance != null) AudioManager.Instance.PlayCarPass();
     }
 
     public void GameOver(){
         if(isGameOver) return;
+        isGameOver = true;
 
         scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
         CalculateReward();
@@ -100,6 +102,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Final Prize: " + finalPrize);
         Debug.Log("Total Cars Passed: " + SaveManager.GetTotalCarsPassed());
         Debug.Log("Total Collisions: " + SaveManager.GetTotalCollisions());
+
+        HUDUI.Instance.HideAllMenuUI();
     }
 
     void CalculateReward(){
