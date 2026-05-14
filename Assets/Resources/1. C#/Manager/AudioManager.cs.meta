@@ -1,2 +1,21 @@
 fileFormatVersion: 2
 guid: 7a9258acdf2d55c4da9f132b633679e0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - bgmSource: {instanceID: 0}
+  - sfxSource: {instanceID: 0}
+  - backgroundMusic: {instanceID: 0}
+  - buttonClickSFX: {fileID: 8300000, guid: bfe69e881252e054fbff0d12d8c76860, type: 3}
+  - trafficLightChangeSFX: {fileID: 8300000, guid: ca04f4200acbffc4182c9b2a1d41d1cf, type: 3}
+  - carPassSFX: {fileID: 8300000, guid: de150856ae0611848b8f76ae1ffb595f, type: 3}
+  - crashSFX: {fileID: 8300000, guid: 7cbdb61376458b848a5b1e852f3214b5, type: 3}
+  - gameOverSFX: {fileID: 8300000, guid: 3dcf568e1e38efc47b6700c9aa8b6ef6, type: 3}
+  - upgradeSFX: {fileID: 8300000, guid: e95735294e6272347b5d6631f9b9730c, type: 3}
+  - notEnoughMoneySFX: {fileID: 8300000, guid: 66adef9e1e4e39444aa2c0fc3e23ff87, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

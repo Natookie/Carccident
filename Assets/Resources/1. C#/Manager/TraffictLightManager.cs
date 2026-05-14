@@ -74,6 +74,8 @@ public class TrafficLightManager : MonoBehaviour
     public void OnTrafficLightClicked(TrafficLight clickedLight, ClickType clickType){
         if(isBlinking) return;
 
+        if (AudioManager.Instance != null) AudioManager.Instance.PlayTrafficLightChange();
+
         TrafficLight.RoadDirection clickedDirection = clickedLight.GetRoadDirection();
         switch(clickType){
             case ClickType.Straight:
@@ -85,6 +87,8 @@ public class TrafficLightManager : MonoBehaviour
             case ClickType.Pedestrian:
                 Debug.Log("Pedestrian");
                 break;
+
+            
         }
         
         LaneStatus lane = GetLaneStatus(clickedDirection);

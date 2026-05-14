@@ -1,24 +1,9 @@
 fileFormatVersion: 2
-guid: 9d3a9fba106d53a4ba6e4500c53eaf4b
+guid: 961fb947a279d3149a69a0c45fba86b9
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.111
-    second: {fileID: 2100000, guid: 7cb4a11fad044e64ca5902172a17591c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lampu depan
-    second: {fileID: 2100000, guid: 2ede2bdb915dcae48af20ca3cb152a58, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lampu merah belakang
-    second: {fileID: 2100000, guid: 674e24360e293cd4f88654f825e9ee7f, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

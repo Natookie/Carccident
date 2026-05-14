@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: edd2d37827db27e4fadad8e446cae708
+guid: 9ba101fef29e73040a1ccc09874bf9d1
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: colorpalette_car-01-01
+    second: {fileID: 2800000, guid: 6fd175b2f913bc341b9210f5c3b06b9e, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

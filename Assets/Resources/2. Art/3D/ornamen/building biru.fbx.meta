@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: b1ba2cd8d0dfd2f468d1bfb92af91dd7
+guid: fcbde94ae0aa5204a969ebf2fbd4f1f4
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: colorpalette_building-01
+    second: {fileID: 2800000, guid: 63cb440e603c55a468439545f86cd697, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

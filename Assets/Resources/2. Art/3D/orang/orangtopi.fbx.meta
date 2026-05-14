@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 0f975484cb1f6604385542b256e55925
+guid: 373020aa10fc7bd4b81effc8fad682d9
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: topi
+    second: {fileID: 2100000, guid: 035bb3d02026e6a44b7c76c99110e4f1, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: hitam_Base_color
+    second: {fileID: 2800000, guid: 49237d4ce319dd84491d5f77b72e911b, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

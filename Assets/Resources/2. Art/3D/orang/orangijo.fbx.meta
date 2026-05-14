@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 5294d30d83780ab41afccc88e55978b1
+guid: 84fdd77b80cba004eaac9cdd1b346c88
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert2
+    second: {fileID: 2100000, guid: 61b7147d10f6ee749bbcc3a9e234f277, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: hijau_Base_color
+    second: {fileID: 2800000, guid: 4bfa0c53efe48ee43bea349a7fbc403c, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

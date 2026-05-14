@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 6ac51d6bc167afd489e0fef625c83569
+guid: 1e729b0443efd064f85c46c8a5eafba9
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ciwi biru
+    second: {fileID: 2100000, guid: 58d2fb8755b274a43aeb67e19e57291b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

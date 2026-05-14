@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: d2e2346923f51be40a2228626fb266d9
+guid: a2a5544a3412b2b46921ef651e8f32c5
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: botax
+    second: {fileID: 2100000, guid: 390064dec4fab5f489b9d690acd6b720, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: merah_Base_color
+    second: {fileID: 2800000, guid: f03bddfb5510d2c4ca9f7fec7815e503, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 1c299557a399beb459233129efc0b7cd
+guid: 2e45982031ac86749b9794f58ff2aaab
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: kacamata
+    second: {fileID: 2100000, guid: 79a9a61fdadc21c43a68a4f82e6168ed, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: coklat_Base_color
+    second: {fileID: 2800000, guid: c48f5f1fe7974c04e9bbba0ada58d41e, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
