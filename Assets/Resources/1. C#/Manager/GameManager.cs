@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance {get; private set;}
     [Header("STATUS")]
     [ReadOnly] public int carPassed;
-    [ReadOnly] public int  carCollided;
+    [ReadOnly] public int carCollided;
 
     [Header("STATE")]
     [ReadOnly] public bool isGameInitialized = false;
@@ -15,16 +15,17 @@ public class GameManager : MonoBehaviour
     [Header("REFERENCES")]
     [SerializeField] ScoreUI scoreUI;
 
-    [Header("STAMINA")]
-    [ReadOnly] public float currentStamina;
-    [ReadOnly] public float maxStamina;
+    [Header("BATTERY")]
+    [ReadOnly] public float currentBattery;
+    [ReadOnly] public float maxBattery;
 
-    [SerializeField] private float baseStamina = 100f;
-    [SerializeField] private float staminaPerLevel = 10f;
-    [SerializeField] private float staminaDrainPerSecond = 1f;
+    [SerializeField] private float baseBattery = 100f;
+    [SerializeField] private float batteryPerLevel = 10f;
+    [SerializeField] private float batteryDrainPerSecond = 1f;
 
     [Header("GAME RULES")]
     [SerializeField] private int maxCollision = 3;
+    [SerializeField] private bool showDebug = false;
 
     [Header("REWARD SETTINGS")]
     [SerializeField] private int timeBonusDivider = 10;
@@ -34,6 +35,10 @@ public class GameManager : MonoBehaviour
     [Header("FINAL RESULT")]
     [ReadOnly] public int finalScore;
     [ReadOnly] public int finalPrize;
+    [ReadOnly] public int timeBonus;
+    [ReadOnly] public int totalPenalty;
+    [ReadOnly] public float greenWaveMultiplier;
+    [ReadOnly] public int oopsiePenaltyPerCrash;
 
     private float shiftTime;
 
@@ -47,15 +52,18 @@ public class GameManager : MonoBehaviour
     }
 
     void Start(){
-        SetupStamina();
+        SetupBattery();
         isGameInitialized = false;
     }
 
     void Update(){
+        HandleDebugHotKey();
+
         if(!isGameInitialized || isGameOver) return;
+        if(carCollided >= maxCollision) GameOver();
 
         shiftTime += Time.deltaTime;
-        DrainStamina();
+        DrainBattery();
     }
 
     #region GAME STATE LOGIC
@@ -69,7 +77,6 @@ public class GameManager : MonoBehaviour
 
         carCollided++;
         if(AudioManager.Instance != null) AudioManager.Instance.PlayCrash();
-        //if(carCollided >= maxCollision) GameOver();
     }
 
     public void OnCarPassed(){
@@ -80,59 +87,45 @@ public class GameManager : MonoBehaviour
     }
 
     public void GameOver(){
-        if(isGameOver) return;
+        if(isGameOver || !isGameInitialized) return;
         isGameOver = true;
 
-        scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
         CalculateReward();
 
         SaveManager.AddMoney(finalPrize);
-        SaveManager.SaveBestScore(finalScore);
-
         SaveManager.AddTotalCarsPassed(carPassed);
         SaveManager.AddTotalCollisions(carCollided);
 
         if(scoreUI != null) scoreUI.DisplayScore(shiftTime, carCollided, carPassed);
         if(AudioManager.Instance != null) AudioManager.Instance.PlayGameOver();
 
-        Debug.Log("Game Over");
-        Debug.Log("Cars Passed This Run: " + carPassed);
-        Debug.Log("Collisions This Run: " + carCollided);
-        Debug.Log("Final Score: " + finalScore);
-        Debug.Log("Final Prize: " + finalPrize);
-        Debug.Log("Total Cars Passed: " + SaveManager.GetTotalCarsPassed());
-        Debug.Log("Total Collisions: " + SaveManager.GetTotalCollisions());
+        if(showDebug){
+            Debug.Log("Game Over");
+            Debug.Log("Cars Passed This Run: " + carPassed);
+            Debug.Log("Collisions This Run: " + carCollided);
+            Debug.Log("Final Score: " + finalScore);
+            Debug.Log("Final Prize: " + finalPrize);
+            Debug.Log("Total Cars Passed: " + SaveManager.GetTotalCarsPassed());
+            Debug.Log("Total Collisions: " + SaveManager.GetTotalCollisions());
+        }
 
         HUDUI.Instance.HideAllMenuUI();
     }
 
     void CalculateReward(){
-        int timeBonus = Mathf.FloorToInt(shiftTime / timeBonusDivider);
-        float charismaMultiplier = GetCharismaMultiplier();
+        timeBonus = Mathf.FloorToInt(shiftTime / timeBonusDivider);
+        greenWaveMultiplier = GetGreenWaveMultiplier();
+        oopsiePenaltyPerCrash = GetOopsiePenaltyPerCrash();
+
+        Debug.Log("green " + greenWaveMultiplier);
+        Debug.Log("oopsie " + oopsiePenaltyPerCrash);
 
         finalScore = carPassed + timeBonus;
+        totalPenalty = carCollided * oopsiePenaltyPerCrash;
 
-        int collisionPenalty = GetFinalCollisionPenalty();
-        int totalPenalty = carCollided * collisionPenalty;
-
-        finalPrize = Mathf.RoundToInt(finalScore * charismaMultiplier * baseMoneyMultiplier);
+        finalPrize = Mathf.RoundToInt(finalScore * greenWaveMultiplier * baseMoneyMultiplier);
         finalPrize -= totalPenalty;
-
         finalPrize = Mathf.Max(0, finalPrize);
-    }
-
-    float GetCharismaMultiplier(){
-        int charismaLevel = SaveManager.GetCharismaLevel();
-        return 1f + (charismaLevel * 0.05f);
-    }
-
-    int GetFinalCollisionPenalty(){
-        int enduranceLevel = SaveManager.GetEnduranceLevel();
-
-        float reduction = Mathf.Min(enduranceLevel * 0.02f, 0.6f);
-        float finalPenalty = baseCollisionPenalty * (1f - reduction);
-
-        return Mathf.RoundToInt(finalPenalty);
     }
 
     public void ExitGame(){
@@ -144,24 +137,64 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-
-    void SetupStamina(){
-        int staminaLevel = SaveManager.GetStaminaLevel();
-
-        maxStamina = baseStamina + (staminaLevel * staminaPerLevel);
-        currentStamina = maxStamina;
+    #region BATTERY
+    void SetupBattery(){
+        int sleepyModeLevel = SaveManager.GetSleepyModeLevel();
+        maxBattery = baseBattery + (sleepyModeLevel * batteryPerLevel);
+        currentBattery = maxBattery;
     }
 
-    void DrainStamina(){
-        currentStamina -= staminaDrainPerSecond * Time.deltaTime;
+    void DrainBattery(){
+        currentBattery -= batteryDrainPerSecond * Time.deltaTime;
 
-        if(currentStamina <= 0){
-            currentStamina = 0;
+        if(currentBattery <= 0){
+            currentBattery = 0;
             GameOver();
         }
     }
+    #endregion
 
-    public float GetCurrentStamina() => currentStamina;
-    public float GetMaxStamina() => maxStamina;
+    #region PUBLIC GETTERS
+    public float GetCurrentBattery() => currentBattery;
+    public float GetMaxBattery() => maxBattery;
     public float GetCurrentShiftTime() => shiftTime;
+    public int GetFinalScore() => finalScore;
+    public int GetFinalPrize() => finalPrize;
+    public int GetTimeBonus() => timeBonus;
+    public int GetTotalPenalty() => totalPenalty;
+    public float GetGreenWaveMultiplier(){
+        int greenWaveLevel = SaveManager.GetGreenWaveLevel();
+        return 1f + (greenWaveLevel * 0.05f);
+    }
+
+    public int GetOopsiePenaltyPerCrash(){
+        int oopsieRecoveryLevel = SaveManager.GetOopsieRecoveryLevel();
+
+        float reduction = Mathf.Min(oopsieRecoveryLevel * 0.02f, 0.6f);
+        float finalPenalty = baseCollisionPenalty * (1f - reduction);
+
+        return Mathf.RoundToInt(finalPenalty);
+    }
+    #endregion
+
+    #region DEBUG HOTKEY
+    void HandleDebugHotKey(){
+        #if UNITY_EDITOR
+        bool isCtrlClicked = Input.GetKey(KeyCode.LeftControl);
+
+        if(isCtrlClicked && Input.GetKeyDown(KeyCode.Q)){
+            OnCarPassed();
+            Debug.Log("[GM]Passed: " + carPassed);
+        }
+        if(isCtrlClicked && Input.GetKeyDown(KeyCode.E)){
+            OnAccident();
+            Debug.Log("[GM]Collided: " + carCollided);
+        }
+        if(isCtrlClicked && Input.GetKeyDown(KeyCode.G)){
+            GameOver();
+            Debug.Log("[GM]Gameover");
+        }
+        #endif
+    }
+    #endregion
 }

@@ -7,12 +7,14 @@ public class UpgradeUI : MonoBehaviour
 {
     [Header("REFERENCES")]
     [SerializeField] private GameObject upgradePanel;
+    [SerializeField] private TextBlock moneyCount;
+    [Space(10)]
     [SerializeField] private SkillButton[] skillList;
     [SerializeField] private SkillManager skillManager;
     [SerializeField] private UpgradeSettings settings;
 
     bool needsUpdate => upgradePanel.activeSelf;
-    const int MONEY = 100000;
+    int playerMoney = 0;
 
     void Awake(){
         for(int i = 0; i < skillList.Length; i++){
@@ -21,11 +23,36 @@ public class UpgradeUI : MonoBehaviour
         }            
     }
 
+    void Start(){
+        RefreshMoney();
+        LoadSkillLevels();
+    }
+
+    void OnDestroy() => SaveSkillLevels();
+    void OnApplicationQuit() => SaveSkillLevels();
+
+    void RefreshMoney(){
+        playerMoney = SaveManager.GetMoney();
+        moneyCount.Text = $"${playerMoney.ToString()}";
+    }
+
+    void LoadSkillLevels(){
+        skillManager.sleepyModeLevel = SaveManager.GetSleepyModeLevel();
+        skillManager.greenWaveAddictionLevel = SaveManager.GetGreenWaveLevel();
+        skillManager.OopsieRecoverySystemLevel = SaveManager.GetOopsieRecoveryLevel();
+    }
+
+    void SaveSkillLevels(){
+        SaveManager.SetSleepyModeLevel(skillManager.sleepyModeLevel);
+        SaveManager.SetGreenWaveLevel(skillManager.greenWaveAddictionLevel);
+        SaveManager.SetOopsieRecoveryLevel(skillManager.OopsieRecoverySystemLevel);
+    }
+
     void Update(){
         if(!needsUpdate) return;
 
         foreach(SkillButton skill in skillList){
-            skill.UpdateUpgradeableStatus(skillManager, MONEY);
+            skill.UpdateUpgradeableStatus(skillManager, playerMoney);
         }
     }
 
@@ -39,12 +66,37 @@ public class UpgradeUI : MonoBehaviour
     IEnumerator DelayedUpgrade(int skillIndex){
         yield return new WaitForSeconds(0.1f);
         
+        int cost = 0;
+        SkillManager.SkillType skillType = SkillManager.SkillType.SleepyMode;
+        
         switch(skillIndex){
-            case 0: skillManager.AddLevel(SkillManager.SkillType.SleepyMode); break;
-            case 1: skillManager.AddLevel(SkillManager.SkillType.GreenWaveAddiction); break;
-            case 2: skillManager.AddLevel(SkillManager.SkillType.OopsieRecoverySystem); break;
+            case 0:
+                skillType = SkillManager.SkillType.SleepyMode;
+                cost = skillManager.GetUpgradeCost(skillType);
+                if(SaveManager.SpendMoney(cost)){
+                    skillManager.AddLevel(skillType);
+                    SaveManager.SetSleepyModeLevel(skillManager.sleepyModeLevel);
+                }
+                break;
+            case 1:
+                skillType = SkillManager.SkillType.GreenWaveAddiction;
+                cost = skillManager.GetUpgradeCost(skillType);
+                if(SaveManager.SpendMoney(cost)){
+                    skillManager.AddLevel(skillType);
+                    SaveManager.SetGreenWaveLevel(skillManager.greenWaveAddictionLevel);
+                }
+                break;
+            case 2:
+                skillType = SkillManager.SkillType.OopsieRecoverySystem;
+                cost = skillManager.GetUpgradeCost(skillType);
+                if(SaveManager.SpendMoney(cost)){
+                    skillManager.AddLevel(skillType);
+                    SaveManager.SetOopsieRecoveryLevel(skillManager.OopsieRecoverySystemLevel);
+                }
+                break;
         }
         
+        RefreshMoney();
         skillList[skillIndex].ResetSizeIfNotUpgradeable();
     }
 }
@@ -112,17 +164,17 @@ public class SkillButton
             case 0:
                 currentLevel = manager.GetSkillLevel(SkillManager.SkillType.SleepyMode);
                 cost = manager.GetUpgradeCost(SkillManager.SkillType.SleepyMode);
-                canUpgrade = manager.CanUpgrade(SkillManager.SkillType.SleepyMode) && playerMoney >= cost;
+                canUpgrade = manager.CanAffordUpgrade(SkillManager.SkillType.SleepyMode, playerMoney);
                 break;
             case 1:
                 currentLevel = manager.GetSkillLevel(SkillManager.SkillType.GreenWaveAddiction);
                 cost = manager.GetUpgradeCost(SkillManager.SkillType.GreenWaveAddiction);
-                canUpgrade = manager.CanUpgrade(SkillManager.SkillType.GreenWaveAddiction) && playerMoney >= cost;
+                canUpgrade = manager.CanAffordUpgrade(SkillManager.SkillType.GreenWaveAddiction, playerMoney);
                 break;
             case 2:
                 currentLevel = manager.GetSkillLevel(SkillManager.SkillType.OopsieRecoverySystem);
                 cost = manager.GetUpgradeCost(SkillManager.SkillType.OopsieRecoverySystem);
-                canUpgrade = manager.CanUpgrade(SkillManager.SkillType.OopsieRecoverySystem) && playerMoney >= cost;
+                canUpgrade = manager.CanAffordUpgrade(SkillManager.SkillType.OopsieRecoverySystem, playerMoney);
                 break;
         }
         

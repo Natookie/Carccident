@@ -32490,6 +32490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeUI
   upgradePanel: {fileID: 811281741}
+  moneyCount: {fileID: 333485834}
   skillList:
   - button: {fileID: 553106172}
     costText: {fileID: 1278512012}
@@ -48498,17 +48499,21 @@ MonoBehaviour:
   isGameInitialized: 0
   isGameOver: 0
   scoreUI: {fileID: 596332756}
-  currentStamina: 0
-  maxStamina: 0
-  baseStamina: 100
-  staminaPerLevel: 10
-  staminaDrainPerSecond: 1
+  currentBattery: 0
+  maxBattery: 0
+  baseBattery: 100
+  batteryPerLevel: 10
+  batteryDrainPerSecond: 1
   maxCollision: 3
   timeBonusDivider: 10
   baseMoneyMultiplier: 3
   baseCollisionPenalty: 5
   finalScore: 0
   finalPrize: 0
+  timeBonus: 0
+  totalPenalty: 0
+  greenWaveMultiplier: 0
+  oopsiePenaltyPerCrash: 0
 --- !u!1 &1200194855
 GameObject:
   m_ObjectHideFlags: 0
@@ -61341,7 +61346,7 @@ MonoBehaviour:
   carParent: {fileID: 626051860}
   baseSpawnInterval: 0
   minSpawnInterval: 0
-  maxActiveCars: 400
+  maxActiveCars: 10
   spawnHeightOffset: 0.75
   northSouthRoad: {fileID: 1490625717}
   eastWestRoad: {fileID: 585973785}
@@ -82819,7 +82824,7 @@ MonoBehaviour:
   eastStraight: {fileID: 519698873}
   westRightTurn: {fileID: 2007408548}
   westStraight: {fileID: 1356066082}
-  showGizmos: 1
+  showGizmos: 0
   showRoadBounds: 1
   showLaneDividers: 1
   showSpawnPoints: 1

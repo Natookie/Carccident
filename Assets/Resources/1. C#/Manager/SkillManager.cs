@@ -14,13 +14,16 @@ public class SkillManager : MonoBehaviour
     public int greenWaveAddictionLevel;
     public int OopsieRecoverySystemLevel;
     
-    [Header("Upgrade Settings")]
-    public int maxLevel = 10;
-    public int[] upgradeCosts = new int[] { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+    [Header("UPGRADE SETTINGS")]
+    public int maxLevel = 99;
+    
+    [Header("COST FORMULA")]
+    [SerializeField] private int baseUpgradeCost = 50;
+    [SerializeField] private float costPower = 1.3f;
 
     public void AddLevel(SkillType type){
         if(!CanUpgrade(type)) {
-            Debug.Log($"Cannot upgrade {type} - max level reached or not enough money!");
+            Debug.Log($"Cannot upgrade {type} - max level reached!");
             return;
         }
         
@@ -56,9 +59,15 @@ public class SkillManager : MonoBehaviour
     
     public int GetUpgradeCost(SkillType type){
         int currentLevel = GetSkillLevel(type);
-        if(currentLevel >= upgradeCosts.Length) return upgradeCosts[upgradeCosts.Length - 1];
-        return upgradeCosts[currentLevel];
+        return CalculateUpgradeCost(currentLevel);
     }
     
+    int CalculateUpgradeCost(int currentLevel) => Mathf.RoundToInt(baseUpgradeCost * Mathf.Pow(currentLevel, costPower));
     public bool CanAffordUpgrade(SkillType type, int playerMoney) => playerMoney >= GetUpgradeCost(type) && CanUpgrade(type);
+    
+    public int GetNextLevelCost(SkillType type){
+        int nextLevel = GetSkillLevel(type) + 1;
+        if(nextLevel > maxLevel) return 0;
+        return CalculateUpgradeCost(nextLevel);
+    }
 }

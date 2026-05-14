@@ -3,6 +3,8 @@ using Nova;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Video;
+using Unity.VisualScripting;
 
 public class ScoreUI : MonoBehaviour
 {
@@ -41,15 +43,15 @@ public class ScoreUI : MonoBehaviour
     private Dictionary<TextBlock, Vector3> originalTextPositions = new Dictionary<TextBlock, Vector3>();
     private Dictionary<TextBlock, Vector3> originalTextScales = new Dictionary<TextBlock, Vector3>();
     private Coroutine currentAnimation;
-    private float currentBaseScore = 0f;
-    private float currentDeduction = 0f;
-    private float currentBonus = 0f;
-    private float currentMultiplier = 1f;
     
     private Vector3 originalBaseScorePos;
     private Vector3 originalBaseScoreScale;
+    
+    private GameManager gm;
 
     void Start(){
+        gm = GameManager.Instance;
+
         if(baseScoreText == null) Debug.LogError("Base score is missing!");
         if(deductionScoreText == null) Debug.LogError("Deduction score is missing!");
         if(bonusScoreText == null) Debug.LogError("Bonus score is missing!");
@@ -58,8 +60,6 @@ public class ScoreUI : MonoBehaviour
         CacheOriginalValues();
         DisableAllBlocks();
         EnableDisplay(false);
-
-        //DisplayScore(10, 20, 30);
     }
 
     void Update() => DisplayNightTime();
@@ -117,6 +117,21 @@ public class ScoreUI : MonoBehaviour
         if(multiplierScoreBlock != null) multiplierScoreBlock.gameObject.SetActive(false);
     }
 
+    string FormatTime(float seconds){
+        if(seconds < 60) return $"{Mathf.FloorToInt(seconds)}s";
+        else if(seconds < 3600){
+            int minutes = Mathf.FloorToInt(seconds / 60);
+            int remainingSeconds = Mathf.FloorToInt(seconds % 60);
+            return $"{minutes}m {remainingSeconds}s";
+        }
+        else{
+            int hours = Mathf.FloorToInt(seconds / 3600);
+            int minutes = Mathf.FloorToInt((seconds % 3600) / 60);
+            int remainingSeconds = Mathf.FloorToInt(seconds % 60);
+            return $"{hours}h {minutes}m {remainingSeconds}s";
+        }
+    }
+
     void DisplayNightTime(){
         DateTime now = DateTime.Now;
         
@@ -145,56 +160,78 @@ public class ScoreUI : MonoBehaviour
     public void DisplayScore(float elapsed, float accidentCounter, float passedCounter){
         EnableDisplay(true);
         
-        currentBaseScore = elapsed;
         if(currentAnimation != null) StopCoroutine(currentAnimation);
-        currentAnimation = StartCoroutine(ScoreDisplaySequence(accidentCounter, passedCounter));
+        currentAnimation = StartCoroutine(ScoreDisplaySequence());
     }
 
-    IEnumerator ScoreDisplaySequence(float accidentCounter, float passedCounter){
+    IEnumerator ScoreDisplaySequence(){
+        int carsPassed = gm.carPassed;
+        int carsCollided = gm.carCollided;
+        float shiftTime = gm.GetCurrentShiftTime();
+        int timeBonus = gm.GetTimeBonus();
+        int oopsiePenaltyPerCrash = gm.GetOopsiePenaltyPerCrash();
+        float greenWaveMultiplier = gm.GetGreenWaveMultiplier();
+        
         yield return StartCoroutine(AnimatePop(scorePanel, originalScorePanelScale));
         
-        baseScoreText.Text = $"${currentBaseScore:F2}";
+        baseScoreText.Text = $"[{shiftTime:F2}]";
         yield return StartCoroutine(ShakeBaseScore());
         yield return new WaitForSeconds(sequenceDelay);
         
-        elapsedTimeText.Text = $"{currentBaseScore:F2}";
+        elapsedTimeText.Text = FormatTime(shiftTime);
         yield return StartCoroutine(ActivateAndPop(elapsedTimeBlock));
         yield return new WaitForSeconds(sequenceDelay);
         
-        carPassedText.Text = passedCounter.ToString();
+        carPassedText.Text = carsPassed.ToString();
         yield return StartCoroutine(ActivateAndPop(carPassedBlock));
         yield return new WaitForSeconds(sequenceDelay);
         
-        carCollidedText.Text = accidentCounter.ToString();
+        carCollidedText.Text = carsCollided.ToString();
         yield return StartCoroutine(ActivateAndPop(carCollidedBlock));
         yield return new WaitForSeconds(sequenceDelay);
         
-        currentDeduction = accidentCounter * 15f;
-        deductionScoreText.Text = currentDeduction.ToString("F2");
-        yield return StartCoroutine(ActivateAndPop(deductionScoreBlock));
-        
-        currentBaseScore -= currentDeduction;
-        baseScoreText.Text = $"${currentBaseScore:F2}";
-        yield return StartCoroutine(ShakeBaseScore());
-        yield return new WaitForSeconds(sequenceDelay);
-
-        currentBonus = passedCounter * 20f;
-        bonusScoreText.Text = currentBonus.ToString("F2");
+        int calculatedTimeBonus = timeBonus;
+        bonusScoreText.Text = $"+{calculatedTimeBonus}";
         yield return StartCoroutine(ActivateAndPop(bonusScoreBlock));
         
-        currentBaseScore += currentBonus;
-        baseScoreText.Text = $"${currentBaseScore:F2}";
+        float newBaseScore = shiftTime + calculatedTimeBonus;
+        baseScoreText.Text = $"[{newBaseScore:F2}]";
         yield return StartCoroutine(ShakeBaseScore());
         yield return new WaitForSeconds(sequenceDelay);
         
-        multiplierScoreText.Text = $"x{currentMultiplier:F1}";
+        int penaltyPerCrash = oopsiePenaltyPerCrash;
+        int totalPenalty = gm.GetTotalPenalty();
+        
+        deductionScoreText.Text = $"-{totalPenalty}";
+        yield return StartCoroutine(ActivateAndPop(deductionScoreBlock));
+        
+        newBaseScore -= totalPenalty;
+        baseScoreText.Text = $"[{newBaseScore:F2}]";
+        yield return StartCoroutine(ShakeBaseScore());
+        yield return new WaitForSeconds(sequenceDelay);
+        
+        float multiplier = greenWaveMultiplier;
+        multiplierScoreText.Text = $"x{multiplier:F2}";
         yield return StartCoroutine(ActivateAndPop(multiplierScoreBlock));
         
-        currentBaseScore *= currentMultiplier;
-        baseScoreText.Text = $"${currentBaseScore:F2}";
+        int finalPrize = gm.GetFinalPrize();
+        int finalScore = gm.GetFinalScore();
+        
+        baseScoreText.Text = $"[{finalScore}]";
+        yield return StartCoroutine(ShakeBaseScore());
+        yield return new WaitForSeconds(sequenceDelay);
+        
+        baseScoreText.Text = $"${finalPrize}";
         yield return StartCoroutine(ShakeBaseScore());
         
+        CheckBestScore();
         currentAnimation = null;
+    }
+
+    void CheckBestScore(){
+        int bestScore = SaveManager.GetBestScore();
+        int currentScore = gm.GetFinalScore();
+        if(bestScore < currentScore) SaveManager.SaveBestScore(currentScore); 
     }
 
     IEnumerator ShakeBaseScore(){

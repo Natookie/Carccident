@@ -50,8 +50,8 @@ public class HUDUI : MonoBehaviour
 
     void Start(){
         fpsTimer = fpsUpdateInterval;
-        if(redCircle != null && redCircle.Shadow == null)
-            Debug.LogWarning("Red Circle doesn't have a Shadow component!");
+        if(redCircle != null && redCircle.Shadow == null) Debug.LogWarning("Red Circle doesn't have a Shadow component!");
+        bestScoreText.Text = $"HIGH SCORE: {SaveManager.GetBestScore().ToString()}";
     }
     
     void Update(){
