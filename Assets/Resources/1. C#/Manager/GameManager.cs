@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using NaughtyAttributes;
 
 public class GameManager : MonoBehaviour
@@ -129,6 +130,8 @@ public class GameManager : MonoBehaviour
     }
 
     public void ExitGame(){
+        AudioManager.Instance.PlayButtonClick();
+
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
         #else
@@ -181,18 +184,23 @@ public class GameManager : MonoBehaviour
     void HandleDebugHotKey(){
         #if UNITY_EDITOR
         bool isCtrlClicked = Input.GetKey(KeyCode.LeftControl);
+        if(!isCtrlClicked) return;
 
-        if(isCtrlClicked && Input.GetKeyDown(KeyCode.Q)){
+        if(Input.GetKeyDown(KeyCode.Q)){
             OnCarPassed();
             Debug.Log("[GM]Passed: " + carPassed);
         }
-        if(isCtrlClicked && Input.GetKeyDown(KeyCode.E)){
+        if(Input.GetKeyDown(KeyCode.E)){
             OnAccident();
             Debug.Log("[GM]Collided: " + carCollided);
         }
-        if(isCtrlClicked && Input.GetKeyDown(KeyCode.G)){
+        if(Input.GetKeyDown(KeyCode.G)){
             GameOver();
             Debug.Log("[GM]Gameover");
+        }
+        if(Input.GetKeyDown(KeyCode.M)){
+            SaveManager.SetMoney(99999);
+            Debug.Log("[GM]Money");
         }
         #endif
     }

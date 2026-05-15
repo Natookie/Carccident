@@ -106,7 +106,7 @@ public class SimplePedestrianWalker : MonoBehaviour
         hasTarget = false;
         isWalking = false;
         
-        //if(pedestrianFade != null) pedestrianFade.ResetFade();
+        if(pedestrianFade != null) pedestrianFade.ResetFade();
 
         if(spawner != null) spawner.ReturnToPool(gameObject);
         else Destroy(gameObject);

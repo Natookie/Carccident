@@ -9,7 +9,8 @@ public class AudioManager : MonoBehaviour
     public AudioSource sfxSource;
 
     [Header("BGM")]
-    public AudioClip backgroundMusic;
+    public AudioClip[] backgroundMusic;
+    private int currentBGMIndex = 0;
 
     [Header("SFX")]
     public AudioClip buttonClickSFX;
@@ -24,95 +25,64 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float bgmVolume = 0.5f;
     [Range(0f, 1f)] public float sfxVolume = 1f;
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
+    void Awake(){
+        if(Instance != null && Instance != this){
             Destroy(gameObject);
             return;
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
-    {
-        PlayBGM();
+    private void Start(){
+        PlayBGM(0);
     }
 
-    public void PlayBGM()
-    {
-        if (backgroundMusic == null || bgmSource == null) return;
+    public void PlayBGM(int index){
+        if(backgroundMusic == null || bgmSource == null) return;
 
-        bgmSource.clip = backgroundMusic;
+        bgmSource.clip = backgroundMusic[index];
         bgmSource.volume = bgmVolume;
         bgmSource.loop = true;
         bgmSource.Play();
     }
 
-    public void StopBGM()
-    {
-        if (bgmSource != null)
-        {
-            bgmSource.Stop();
-        }
+    public void StopBGM(){
+        if(bgmSource != null) bgmSource.Stop();
     }
 
-    public void PlaySFX(AudioClip clip)
-    {
-        if (clip == null || sfxSource == null) return;
-
+    public void PlaySFX(AudioClip clip){
+        if(clip == null || sfxSource == null) return;
         sfxSource.PlayOneShot(clip, sfxVolume);
     }
 
-    public void PlayButtonClick()
-    {
-        PlaySFX(buttonClickSFX);
-    }
+    public void PlayButtonClick() => PlaySFX(buttonClickSFX);
+    public void PlayTrafficLightChange() => PlaySFX(trafficLightChangeSFX);
+    public void PlayCarPass() => PlaySFX(carPassSFX);
+    public void PlayCrash() => PlaySFX(crashSFX);
+    public void PlayGameOver() => PlaySFX(gameOverSFX);
+    public void PlayUpgrade() => PlaySFX(upgradeSFX);
+    public void PlayNotEnoughMoney() => PlaySFX(notEnoughMoneySFX);
 
-    public void PlayTrafficLightChange()
-    {
-        PlaySFX(trafficLightChangeSFX);
-    }
-
-    public void PlayCarPass()
-    {
-        PlaySFX(carPassSFX);
-    }
-
-    public void PlayCrash()
-    {
-        PlaySFX(crashSFX);
-    }
-
-    public void PlayGameOver()
-    {
-        PlaySFX(gameOverSFX);
-    }
-
-    public void PlayUpgrade()
-    {
-        PlaySFX(upgradeSFX);
-    }
-
-    public void PlayNotEnoughMoney()
-    {
-        PlaySFX(notEnoughMoneySFX);
-    }
-
-    public void SetBGMVolume(float volume)
-    {
+    public void SetVolume(float volume){
         bgmVolume = volume;
-
-        if (bgmSource != null)
-        {
-            bgmSource.volume = bgmVolume;
-        }
-    }
-
-    public void SetSFXVolume(float volume)
-    {
         sfxVolume = volume;
+        
+        if(bgmSource != null && bgmSource.isPlaying) bgmSource.volume = bgmVolume;
+        int volumePercent = Mathf.RoundToInt(volume * 100f);
+        
+        if(volumePercent == 27){
+            if(currentBGMIndex != 1){
+                currentBGMIndex = 1;
+                PlayBGM(1);
+                Debug.Log("test");
+            }
+        }
+        else{
+            if(currentBGMIndex != 0){
+                currentBGMIndex = 0;
+                PlayBGM(0);
+            }
+        }
     }
 }

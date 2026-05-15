@@ -136,6 +136,7 @@ public class SettingUI : MonoBehaviour
         
         volumeInnerPart.Position.X = newX;
         if(volumeValueText != null) volumeValueText.Text = $"{Mathf.RoundToInt(volumePercent)}%";
+        if(AudioManager.Instance != null) AudioManager.Instance.SetVolume(percent);
     }
     #endregion
     

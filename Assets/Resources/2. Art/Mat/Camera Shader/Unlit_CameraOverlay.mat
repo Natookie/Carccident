@@ -37,7 +37,7 @@ Material:
     - _LineSpeed: 1
     - _LineThickness: 6
     - _NoiseIntensity: 0.09
-    - _NoiseStrength: 0.1
+    - _NoiseStrength: 0.3
     - _OverlayAlpha: 0.01
     - _OverlayOpacity: 0.5
     - _PixelSize: 900

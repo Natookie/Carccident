@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Dark Barrier
+  m_Shader: {fileID: 4800000, guid: 3d4b5d66ffaff6d4b94a2dda0769f80c, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _BottomFade: 2.4
+    - _DepthFade: 15.74
+    - _FresnelPower: 10
+    - _FresnelStrength: 5
+    - _NoiseScale: 2.54
+    - _NoiseSpeed: 2
+    - _Opacity: 0.45
+    - _TopFade: 12.53
+    m_Colors:
+    - _EdgeColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 0.19401924, g: 0.514151, b: 0.31850445, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

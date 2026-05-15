@@ -1,6 +1,7 @@
 using UnityEngine;
 using Nova;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class MainButtonUI : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class MainButtonUI : MonoBehaviour
     [SerializeField] private PlayButton playButton;
     
     [SerializeField] private ButtonAnimationSettings animationSettings;
-    
+    [HideInInspector] private bool isGameLoaded = false;
+
     private AnimatedButton currentSelectedButton;
     
     void Awake(){
@@ -24,11 +26,13 @@ public class MainButtonUI : MonoBehaviour
     void Start(){
         CloseAllPanels();
         OpenUpgradePanel();
+        isGameLoaded = true;
     }
     
     public void SetSelectedButton(AnimatedButton button){
         if(currentSelectedButton != null && currentSelectedButton != button) currentSelectedButton.SetSelected(false);
         
+        if(isGameLoaded) AudioManager.Instance.PlayButtonClick();
         currentSelectedButton = button;
         currentSelectedButton.SetSelected(true);
     }

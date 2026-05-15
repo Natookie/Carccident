@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e45982031ac86749b9794f58ff2aaab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 1.87
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2e45982031ac86749b9794f58ff2aaab, type: 3}
       propertyPath: m_LocalPosition.z
@@ -74,6 +74,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2e45982031ac86749b9794f58ff2aaab, type: 3}
       insertIndex: -1
       addedObject: {fileID: -5565405343735763750}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2e45982031ac86749b9794f58ff2aaab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7088491869678879891}
   m_SourcePrefab: {fileID: 100100000, guid: 2e45982031ac86749b9794f58ff2aaab, type: 3}
 --- !u!1 &8348032239950779945 stripped
 GameObject:
@@ -109,3 +112,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PedestrianFade
   fadeDuration: 2
+--- !u!136 &7088491869678879891
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348032239950779945}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.013128087
+  m_Height: 0.039138634
+  m_Direction: 1
+  m_Center: {x: -0.000012698118, y: -0.0015743431, z: -0.0029634088}

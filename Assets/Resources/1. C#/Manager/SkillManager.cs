@@ -23,10 +23,11 @@ public class SkillManager : MonoBehaviour
 
     public void AddLevel(SkillType type){
         if(!CanUpgrade(type)) {
-            Debug.Log($"Cannot upgrade {type} - max level reached!");
+            AudioManager.Instance.PlayNotEnoughMoney();            
             return;
         }
         
+        AudioManager.Instance.PlayUpgrade();            
         switch(type){
             case SkillType.SleepyMode:
                 sleepyModeLevel++;
