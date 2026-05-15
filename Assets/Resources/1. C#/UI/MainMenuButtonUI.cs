@@ -12,6 +12,8 @@ public class MainButtonUI : MonoBehaviour
     
     [SerializeField] private ButtonAnimationSettings animationSettings;
     
+    private AnimatedButton currentSelectedButton;
+    
     void Awake(){
         upgradeButton.Initialize(this, animationSettings);
         settingButton.Initialize(this, animationSettings);
@@ -24,14 +26,23 @@ public class MainButtonUI : MonoBehaviour
         OpenUpgradePanel();
     }
     
+    public void SetSelectedButton(AnimatedButton button){
+        if(currentSelectedButton != null && currentSelectedButton != button) currentSelectedButton.SetSelected(false);
+        
+        currentSelectedButton = button;
+        currentSelectedButton.SetSelected(true);
+    }
+    
     public void OpenUpgradePanel(){
         CloseAllPanels();
         upgradeButton.Panel.SetActive(true);
+        SetSelectedButton(upgradeButton);
     }
     
     public void OpenSettingPanel(){
         CloseAllPanels();
         settingButton.Panel.SetActive(true);
+        SetSelectedButton(settingButton);
     }
     
     public void OpenExitPanel() => GameManager.Instance.ExitGame();
@@ -48,6 +59,7 @@ public class ButtonAnimationSettings
 {
     [Header("SHARED VALUES")]
     public Color mainBlockHoverColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+    public Color elementHoverColor = new Color(1f, 0.9f, 0.9f, 1f);
     public float hoverPositionOffset = 20f;
     public float clickScaleIncrease = 1.1f;
     public float animationSpeed = 8f;
@@ -60,16 +72,21 @@ public class AnimatedButton
     [SerializeField] protected UIBlock2D container;
     [SerializeField] protected UIBlock2D topBorder;
     [SerializeField] protected UIBlock2D mainBlock;
+    [SerializeField] protected UIBlock2D icon;
+    [SerializeField] protected TextBlock label;
     [SerializeField] protected Color topBorderHoverColor = new Color(1f, 0.8f, 0.8f, 1f);
     
     protected float originalMainBlockY;
     protected Color originalTopBorderColor;
     protected Color originalMainBlockColor;
+    protected Color originalIconColor;
+    protected Color originalLabelColor;
     protected Vector3 originalContainerScale;
     
     protected Coroutine currentAnimation;
     protected MonoBehaviour owner;
     protected ButtonAnimationSettings settings;
+    protected bool isSelected = false;
     
     public virtual void Initialize(MonoBehaviour mono, ButtonAnimationSettings animSettings){
         owner = mono;
@@ -80,6 +97,8 @@ public class AnimatedButton
             originalMainBlockY = mainBlock.Position.Y.Value;
             originalMainBlockColor = mainBlock.Color;
         }
+        if(icon != null) originalIconColor = icon.Color;
+        if(label != null) originalLabelColor = label.Color;
         
         if(container != null){
             originalContainerScale = container.transform.localScale;
@@ -90,14 +109,14 @@ public class AnimatedButton
     }
     
     protected virtual void OnHover(Gesture.OnHover evt){
-        if(owner == null) return;
+        if(owner == null || isSelected) return;
         
         if(currentAnimation != null) owner.StopCoroutine(currentAnimation);
         currentAnimation = owner.StartCoroutine(AnimateHover(true));
     }
     
     protected virtual void OnUnhover(Gesture.OnUnhover evt){
-        if(owner == null) return;
+        if(owner == null || isSelected) return;
         
         if(currentAnimation != null) owner.StopCoroutine(currentAnimation);
         currentAnimation = owner.StartCoroutine(AnimateHover(false));
@@ -115,6 +134,12 @@ public class AnimatedButton
         Color startMainBlockColor = mainBlock != null ? mainBlock.Color : Color.white;
         Color targetMainBlockColor = hover ? settings.mainBlockHoverColor : originalMainBlockColor;
         
+        Color startIconColor = icon != null ? icon.Color : Color.white;
+        Color targetIconColor = hover ? settings.elementHoverColor : originalIconColor;
+        
+        Color startLabelColor = label != null ? label.Color : Color.white;
+        Color targetLabelColor = hover ? settings.elementHoverColor : originalLabelColor;
+        
         while(elapsed < 1f){
             elapsed += Time.deltaTime * settings.animationSpeed;
             float t = Mathf.Clamp01(elapsed);
@@ -125,6 +150,8 @@ public class AnimatedButton
                 mainBlock.Position.Y.Value = Mathf.Lerp(startMainBlockY, targetMainBlockY, easeT);
                 mainBlock.Color = Color.Lerp(startMainBlockColor, targetMainBlockColor, easeT);
             }
+            if(icon != null) icon.Color = Color.Lerp(startIconColor, targetIconColor, easeT);
+            if(label != null) label.Color = Color.Lerp(startLabelColor, targetLabelColor, easeT);
             
             yield return null;
         }
@@ -134,6 +161,8 @@ public class AnimatedButton
             mainBlock.Position.Y.Value = targetMainBlockY;
             mainBlock.Color = targetMainBlockColor;
         }
+        if(icon != null) icon.Color = targetIconColor;
+        if(label != null) label.Color = targetLabelColor;
         
         currentAnimation = null;
     }
@@ -174,6 +203,29 @@ public class AnimatedButton
         container.transform.localScale = originalScale;
         currentAnimation = null;
     }
+    
+    public virtual void SetSelected(bool selected){
+        isSelected = selected;
+        
+        if(selected){
+            if(topBorder != null) topBorder.Color = topBorderHoverColor;
+            if(mainBlock != null){
+                mainBlock.Position.Y.Value = originalMainBlockY;
+                mainBlock.Color = settings.mainBlockHoverColor;
+            }
+            if(icon != null) icon.Color = settings.elementHoverColor;
+            if(label != null) label.Color = settings.elementHoverColor;
+        }
+        else{
+            if(topBorder != null) topBorder.Color = originalTopBorderColor;
+            if(mainBlock != null){
+                mainBlock.Position.Y.Value = originalMainBlockY;
+                mainBlock.Color = originalMainBlockColor;
+            }
+            if(icon != null) icon.Color = originalIconColor;
+            if(label != null) label.Color = originalLabelColor;
+        }
+    }
 }
 
 [System.Serializable]
@@ -190,11 +242,19 @@ public class UpgradeButton : AnimatedButton
             container.AddGestureHandler<Gesture.OnPress>((evt) => {
                 if(owner != null){
                     var hud = owner as MainButtonUI;
-                    if(hud != null) hud.OpenUpgradePanel();
+                    if(hud != null){
+                        hud.OpenUpgradePanel();
+                        hud.SetSelectedButton(this);
+                    }
                 }
                 PlayClickAnimation();
             });
         }
+    }
+    
+    public override void SetSelected(bool selected){
+        base.SetSelected(selected);
+        if(selected && panel != null) panel.SetActive(true);
     }
 }
 
@@ -212,19 +272,34 @@ public class SettingButton : AnimatedButton
             container.AddGestureHandler<Gesture.OnPress>((evt) => {
                 if(owner != null){
                     var hud = owner as MainButtonUI;
-                    if(hud != null) hud.OpenSettingPanel();
+                    if(hud != null){
+                        hud.OpenSettingPanel();
+                        hud.SetSelectedButton(this);
+                    }
                 }
                 PlayClickAnimation();
             });
         }
+    }
+    
+    public override void SetSelected(bool selected){
+        base.SetSelected(selected);
+        if(selected && panel != null) panel.SetActive(true);
     }
 }
 
 [System.Serializable]
 public class ExitButton : AnimatedButton
 {
+    [Header("EXIT BUTTON")]
+    [SerializeField] private Color exitTopBorderHoverColor = new Color(1f, 0.6f, 0.6f, 1f);
+    [SerializeField] private Color exitMainBlockHoverColor = new Color(0.9f, 0.5f, 0.5f, 1f);
+    [SerializeField] private Color exitElementHoverColor = new Color(1f, 0.5f, 0.5f, 1f);
+    
     public override void Initialize(MonoBehaviour mono, ButtonAnimationSettings animSettings){
         base.Initialize(mono, animSettings);
+        
+        topBorderHoverColor = exitTopBorderHoverColor;
         
         if(container != null){
             container.AddGestureHandler<Gesture.OnPress>((evt) => {
@@ -234,6 +309,74 @@ public class ExitButton : AnimatedButton
                 }
                 PlayClickAnimation();
             });
+        }
+    }
+    
+    protected override IEnumerator AnimateHover(bool hover){
+        float elapsed = 0f;
+        
+        float startMainBlockY = mainBlock != null ? mainBlock.Position.Y.Value : 0;
+        float targetMainBlockY = hover ? originalMainBlockY + settings.hoverPositionOffset : originalMainBlockY;
+        
+        Color startTopBorderColor = topBorder != null ? topBorder.Color : Color.white;
+        Color targetTopBorderColor = hover ? exitTopBorderHoverColor : originalTopBorderColor;
+        
+        Color startMainBlockColor = mainBlock != null ? mainBlock.Color : Color.white;
+        Color targetMainBlockColor = hover ? exitMainBlockHoverColor : originalMainBlockColor;
+        
+        Color startIconColor = icon != null ? icon.Color : Color.white;
+        Color targetIconColor = hover ? exitElementHoverColor : originalIconColor;
+        
+        Color startLabelColor = label != null ? label.Color : Color.white;
+        Color targetLabelColor = hover ? exitElementHoverColor : originalLabelColor;
+        
+        while(elapsed < 1f){
+            elapsed += Time.deltaTime * settings.animationSpeed;
+            float t = Mathf.Clamp01(elapsed);
+            float easeT = 1f - Mathf.Pow(1f - t, 3);
+            
+            if(topBorder != null) topBorder.Color = Color.Lerp(startTopBorderColor, targetTopBorderColor, easeT);
+            if(mainBlock != null){
+                mainBlock.Position.Y.Value = Mathf.Lerp(startMainBlockY, targetMainBlockY, easeT);
+                mainBlock.Color = Color.Lerp(startMainBlockColor, targetMainBlockColor, easeT);
+            }
+            if(icon != null) icon.Color = Color.Lerp(startIconColor, targetIconColor, easeT);
+            if(label != null) label.Color = Color.Lerp(startLabelColor, targetLabelColor, easeT);
+            
+            yield return null;
+        }
+        
+        if(topBorder != null) topBorder.Color = targetTopBorderColor;
+        if(mainBlock != null){
+            mainBlock.Position.Y.Value = targetMainBlockY;
+            mainBlock.Color = targetMainBlockColor;
+        }
+        if(icon != null) icon.Color = targetIconColor;
+        if(label != null) label.Color = targetLabelColor;
+        
+        currentAnimation = null;
+    }
+    
+    public override void SetSelected(bool selected){
+        isSelected = selected;
+        
+        if(selected){
+            if(topBorder != null) topBorder.Color = exitTopBorderHoverColor;
+            if(mainBlock != null){
+                mainBlock.Position.Y.Value = originalMainBlockY;
+                mainBlock.Color = exitMainBlockHoverColor;
+            }
+            if(icon != null) icon.Color = exitElementHoverColor;
+            if(label != null) label.Color = exitElementHoverColor;
+        }
+        else{
+            if(topBorder != null) topBorder.Color = originalTopBorderColor;
+            if(mainBlock != null){
+                mainBlock.Position.Y.Value = originalMainBlockY;
+                mainBlock.Color = originalMainBlockColor;
+            }
+            if(icon != null) icon.Color = originalIconColor;
+            if(label != null) label.Color = originalLabelColor;
         }
     }
 }

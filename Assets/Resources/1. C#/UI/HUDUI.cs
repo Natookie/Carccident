@@ -66,7 +66,12 @@ public class HUDUI : MonoBehaviour
         fpsTimer -= Time.unscaledDeltaTime;
         if(fpsTimer <= 0f){
             currentFPS = fpsFrames / fpsAccumulator;
-            if(cctvText != null) cctvText.Text = $"{Mathf.RoundToInt(currentFPS)} FPS";
+            if(cctvText != null){
+                int displayFPS = Mathf.RoundToInt(currentFPS);
+                
+                displayFPS = Mathf.Min(displayFPS, 99);
+                cctvText.Text = $"{Mathf.RoundToInt(displayFPS)} FPS";
+            }
             
             fpsAccumulator = 0f;
             fpsFrames = 0;
