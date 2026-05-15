@@ -1,86 +1,134 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PedestrianSpawner : MonoBehaviour
 {
-    [Header("Pedestrian Prefabs")]
+    [Header("REFERENCES")]
     [SerializeField] private GameObject[] pedestrianPrefabs;
-
-    [Header("Pedestrian Areas")]
     [SerializeField] private BoxCollider[] pedestrianAreas;
 
-    [Header("Spawn Settings")]
+    [Header("SPAWN SETTING")]
     [SerializeField] private float spawnInterval = 2f;
+    [SerializeField] private int maxPedestrians = 20;
     [SerializeField] private int maxTryFindSpawnPoint = 50;
+    [SerializeField] private Transform pedesParent;
 
-    [Header("Spawn Obstruction Check")]
+    [Header("OBSTRUCTION CHECK")]
     [SerializeField] private LayerMask obstructLayer;
     [SerializeField] private float checkRadius = 0.5f;
     [SerializeField] private float castHeight = 0.5f;
 
-    private void Start()
-    {
-        StartCoroutine(SpawnLoop());
+    private List<GameObject> pedestrianPool;
+    private List<GameObject> activePedestrians;
+    private Coroutine spawnCoroutine;
+
+    void Awake() => InitializePool();
+    void Start() => StartSpawner();
+    void OnDestroy() => StopSpawner();
+
+    void InitializePool(){
+        pedestrianPool = new List<GameObject>();
+        activePedestrians = new List<GameObject>();
+
+        if(pedestrianPrefabs == null || pedestrianPrefabs.Length == 0){
+            Debug.LogWarning("No pedestrian prefab assigned.");
+            return;
+        }
+
+        foreach(GameObject prefab in pedestrianPrefabs){
+            for(int i = 0; i < maxPedestrians / pedestrianPrefabs.Length; i++){
+                GameObject pedestrian = Instantiate(prefab);
+                pedestrian.transform.SetParent(pedesParent);
+                pedestrian.SetActive(false);
+                pedestrianPool.Add(pedestrian);
+            }
+        }
     }
 
-    private IEnumerator SpawnLoop()
-    {
-        while (true)
-        {
+    public void StartSpawner(){
+        if(spawnCoroutine != null) StopCoroutine(spawnCoroutine);
+        spawnCoroutine = StartCoroutine(SpawnLoop());
+    }
+
+    public void StopSpawner(){
+        if(spawnCoroutine != null){
+            StopCoroutine(spawnCoroutine);
+            spawnCoroutine = null;
+        }
+    }
+
+    IEnumerator SpawnLoop(){
+        while(true){
             SpawnPedestrian();
             yield return new WaitForSeconds(spawnInterval);
         }
     }
 
-    private void SpawnPedestrian()
-    {
-        if (pedestrianPrefabs == null || pedestrianPrefabs.Length == 0)
-        {
+    void SpawnPedestrian(){
+        if(pedestrianPrefabs == null || pedestrianPrefabs.Length == 0){
             Debug.LogWarning("No pedestrian prefab assigned.");
             return;
         }
 
-        if (pedestrianAreas == null || pedestrianAreas.Length == 0)
-        {
+        if(pedestrianAreas == null || pedestrianAreas.Length == 0){
             Debug.LogWarning("No pedestrian area assigned.");
             return;
         }
 
-        GameObject randomPrefab = pedestrianPrefabs[Random.Range(0, pedestrianPrefabs.Length)];
-        BoxCollider selectedArea = pedestrianAreas[Random.Range(0, pedestrianAreas.Length)];
+        GameObject pedestrian = GetPooledPedestrian();
+        if(pedestrian == null) return;
 
-        float prefabY = randomPrefab.transform.position.y;
+        BoxCollider selectedArea = pedestrianAreas[Random.Range(0, pedestrianAreas.Length)];
+        float prefabY = pedestrian.transform.position.y;
 
         bool foundSpawn = TryGetClearSpawnPoint(selectedArea, prefabY, out Vector3 spawnPosition);
 
-        if (!foundSpawn)
-        {
+        if(!foundSpawn){
+            ReturnToPool(pedestrian);
             Debug.LogWarning("Failed to find clear pedestrian spawn point.");
             return;
         }
 
-        GameObject pedestrian = Instantiate(randomPrefab, spawnPosition, Quaternion.identity);
+        pedestrian.transform.position = spawnPosition;
+        pedestrian.SetActive(true);
+        activePedestrians.Add(pedestrian);
 
         SimplePedestrianWalker walker = pedestrian.GetComponent<SimplePedestrianWalker>();
+        if(walker != null) walker.InitDestination(selectedArea, obstructLayer);
+        else Debug.LogWarning("Pedestrian prefab does not have SimplePedestrianWalker script.");
+    }
 
-        if (walker != null)
-        {
-            walker.InitDestination(selectedArea);
+    GameObject GetPooledPedestrian(){
+        foreach(GameObject pedestrian in pedestrianPool){
+            if(!pedestrian.activeInHierarchy) return pedestrian;
         }
-        else
-        {
-            Debug.LogWarning("Pedestrian prefab does not have SimplePedestrianWalker script.");
+
+        Debug.LogWarning("No available pedestrian in pool. Consider increasing maxPedestrians.");
+        return null;
+    }
+
+    public void ReturnToPool(GameObject pedestrian){
+        if(pedestrian == null) return;
+        
+        pedestrian.SetActive(false);
+        activePedestrians.Remove(pedestrian);
+        
+        pedestrian.transform.position = Vector3.zero;
+        pedestrian.transform.rotation = Quaternion.identity;
+    }
+
+    public void ReturnAllToPool(){
+        foreach(GameObject pedestrian in activePedestrians.ToArray()){
+            ReturnToPool(pedestrian);
         }
     }
 
-    private bool TryGetClearSpawnPoint(BoxCollider area, float yPosition, out Vector3 spawnPosition)
-    {
-        for (int i = 0; i < maxTryFindSpawnPoint; i++)
-        {
+    bool TryGetClearSpawnPoint(BoxCollider area, float yPosition, out Vector3 spawnPosition){
+        for(int i = 0; i < maxTryFindSpawnPoint; i++){
             Vector3 randomPoint = GetRandomPointInArea(area, yPosition);
 
-            if (!IsPointObstructed(randomPoint))
-            {
+            if(!IsPointObstructed(randomPoint)){
                 spawnPosition = randomPoint;
                 return true;
             }
@@ -90,18 +138,14 @@ public class PedestrianSpawner : MonoBehaviour
         return false;
     }
 
-    private Vector3 GetRandomPointInArea(BoxCollider area, float yPosition)
-    {
+    Vector3 GetRandomPointInArea(BoxCollider area, float yPosition){
         Bounds bounds = area.bounds;
-
         float randomX = Random.Range(bounds.min.x, bounds.max.x);
         float randomZ = Random.Range(bounds.min.z, bounds.max.z);
-
         return new Vector3(randomX, yPosition, randomZ);
     }
 
-    private bool IsPointObstructed(Vector3 position)
-    {
+    bool IsPointObstructed(Vector3 position){
         Vector3 checkPosition = new Vector3(position.x, castHeight, position.z);
 
         Collider[] hits = Physics.OverlapSphere(
@@ -111,8 +155,7 @@ public class PedestrianSpawner : MonoBehaviour
             QueryTriggerInteraction.Collide
         );
 
-        foreach (Collider hit in hits)
-        {
+        foreach(Collider hit in hits){
             Debug.Log("Spawn blocked by: " + hit.name);
             return true;
         }
@@ -120,15 +163,13 @@ public class PedestrianSpawner : MonoBehaviour
         return false;
     }
 
-    private void OnDrawGizmosSelected()
-    {
+    void OnDrawGizmosSelected(){
         Gizmos.color = Color.cyan;
 
-        if (pedestrianAreas == null) return;
+        if(pedestrianAreas == null) return;
 
-        foreach (BoxCollider area in pedestrianAreas)
-        {
-            if (area == null) continue;
+        foreach(BoxCollider area in pedestrianAreas){
+            if(area == null) continue;
             Gizmos.DrawWireCube(area.bounds.center, area.bounds.size);
         }
     }

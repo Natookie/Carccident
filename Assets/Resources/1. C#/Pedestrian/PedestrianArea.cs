@@ -4,19 +4,16 @@ public class PedestrianArea : MonoBehaviour
 {
     [SerializeField] private BoxCollider areaCollider;
 
-    private void Awake()
-    {
-        if (areaCollider == null)
-            areaCollider = GetComponent<BoxCollider>();
+    void Awake(){
+        if(areaCollider == null) areaCollider = GetComponent<BoxCollider>();
     }
 
-    public Vector3 GetRandomPoint()
-    {
+    public Vector3 GetRandomPoint(){
         Bounds bounds = areaCollider.bounds;
 
         float randomX = Random.Range(bounds.min.x, bounds.max.x);
         float randomZ = Random.Range(bounds.min.z, bounds.max.z);
 
-        return new Vector3(randomX, bounds.center.y, randomZ);
+        return new Vector3(randomX, bounds.max.y, randomZ);
     }
 }

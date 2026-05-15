@@ -92,15 +92,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca03a9ef0cf8d74409ed9d041fb6b42a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PedestrianSimpleWalker
-  moveSpeed: 2
-  stopDistance: 0.1
+  settings: {fileID: 11400000, guid: fe75e9c1ce764294e95ad425fc1c4e4a, type: 2}
   obstructLayer:
     serializedVersion: 2
     m_Bits: 1024
-  checkRadius: 0.5
-  maxTryFindDestination: 20
-  castHeight: 0.5
-  fadeDuration: 2
 --- !u!114 &-5565405343735763750
 MonoBehaviour:
   m_ObjectHideFlags: 0
