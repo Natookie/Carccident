@@ -42,7 +42,7 @@ public class TrafficLightManager : MonoBehaviour
         Pedestrian
     }
 
-    private bool isBlinking = false;
+    private bool isProcessing = false;
 
     void Awake(){
         if(Instance != null && Instance != this){
@@ -58,52 +58,87 @@ public class TrafficLightManager : MonoBehaviour
         if(yellowMaterial == null) Debug.LogError("Yellow material not assigned!");
 
         if(testAllLanesGreen){
-            north.straightActive = true;
-            north.rightActive = true;
-            south.straightActive = true;
-            south.rightActive = true;
-            east.straightActive = true;
-            east.rightActive = true;
-            west.straightActive = true;
-            west.rightActive = true;
+            SetAllLanesGreen(true);
         }
         
         UpdateAllLights();
     }
 
-    public void OnTrafficLightClicked(TrafficLight clickedLight, ClickType clickType){
-        if(isBlinking) return;
+    void SetAllLanesGreen(bool isGreen){
+        north.straightActive = isGreen;
+        north.rightActive = isGreen;
+        south.straightActive = isGreen;
+        south.rightActive = isGreen;
+        east.straightActive = isGreen;
+        east.rightActive = isGreen;
+        west.straightActive = isGreen;
+        west.rightActive = isGreen;
+    }
 
-        if(AudioManager.Instance != null) AudioManager.Instance.PlayTrafficLightChange();
+    public void OnTrafficLightClicked(TrafficLight clickedLight, ClickType clickType, bool turnGreen){
+        if(isProcessing) return;
 
         TrafficLight.RoadDirection clickedDirection = clickedLight.GetRoadDirection();
-        switch(clickType){
-            case ClickType.Straight:
-                ToggleStraight(clickedDirection);
-                break;
-            case ClickType.Right:
-                ToggleRightTurn(clickedDirection);
-                break;
-            case ClickType.Pedestrian:
-                Debug.Log("Pedestrian");
-                break;
-
-            
-        }
         
         LaneStatus lane = GetLaneStatus(clickedDirection);
+        bool previousStraight = lane.straightActive;
+        bool previousRight = lane.rightActive;
+        
+        switch(clickType){
+            case ClickType.Straight:
+                lane.straightActive = turnGreen;
+                break;
+            case ClickType.Right:
+                lane.rightActive = turnGreen;
+                break;
+            case ClickType.Pedestrian:
+                break;
+        }
+        
         TrafficUI.Instance.UpdateUI(lane);
-        StartCoroutine(BlinkThenUpdate(clickedDirection));
+        
+        StartCoroutine(BlinkThenUpdate(clickedDirection, clickType, previousStraight, previousRight));
+        if(AudioManager.Instance != null) AudioManager.Instance.PlayTrafficLightChange();
     }
 
-    void ToggleStraight(TrafficLight.RoadDirection direction){
-        LaneStatus lane = GetLaneStatus(direction);
-        if(lane != null) lane.straightActive = !lane.straightActive;
+    IEnumerator BlinkThenUpdate(TrafficLight.RoadDirection direction, ClickType clickType, bool previousStraight, bool previousRight){
+        isProcessing = true;
+        
+        TrafficLight targetLight = GetLightByDirection(direction);
+        LaneStatus currentLane = GetLaneStatus(direction);
+        
+        if(targetLight != null){
+            if(clickType == ClickType.Straight && previousStraight != currentLane.straightActive){
+                targetLight.SetStraightYellow();
+                yield return new WaitForSeconds(yellowLightDuration);
+            }
+            else if(clickType == ClickType.Right && previousRight != currentLane.rightActive){
+                targetLight.SetRightYellow();
+                yield return new WaitForSeconds(yellowLightDuration);
+            }
+        }
+        
+        UpdateLight(direction);
+        isProcessing = false;
     }
 
-    void ToggleRightTurn(TrafficLight.RoadDirection direction){
+    void UpdateLight(TrafficLight.RoadDirection direction){
         LaneStatus lane = GetLaneStatus(direction);
-        if(lane != null) lane.rightActive = !lane.rightActive;
+        TrafficLight targetLight = GetLightByDirection(direction);
+        if(lane == null || targetLight == null) return;
+        
+        if(lane.straightActive) targetLight.SetStraightGreen();
+        else targetLight.SetStraightRed();
+        
+        if(lane.rightActive) targetLight.SetRightGreen();
+        else targetLight.SetRightRed();
+    }
+
+    void UpdateAllLights(){
+        UpdateLight(TrafficLight.RoadDirection.North);
+        UpdateLight(TrafficLight.RoadDirection.South);
+        UpdateLight(TrafficLight.RoadDirection.East);
+        UpdateLight(TrafficLight.RoadDirection.West);
     }
 
     public LaneStatus GetLaneStatus(TrafficLight.RoadDirection direction){
@@ -124,35 +159,6 @@ public class TrafficLightManager : MonoBehaviour
             case TrafficLight.RoadDirection.West: return westLight;
             default: return null;
         }
-    }
-
-    IEnumerator BlinkThenUpdate(TrafficLight.RoadDirection direction){
-        isBlinking = true;
-        
-        TrafficLight targetLight = GetLightByDirection(direction);
-        if(targetLight != null){
-            targetLight.SetYellow();
-            yield return new WaitForSeconds(yellowLightDuration);
-        }
-        
-        UpdateLight(direction);
-        isBlinking = false;
-    }
-
-    void UpdateLight(TrafficLight.RoadDirection direction){
-        LaneStatus lane = GetLaneStatus(direction);
-        TrafficLight targetLight = GetLightByDirection(direction);
-        if(lane == null || targetLight == null) return;
-        
-        if(lane.straightActive || lane.rightActive) targetLight.SetGreen();
-        else targetLight.SetRed();
-    }
-
-    void UpdateAllLights(){
-        UpdateLight(TrafficLight.RoadDirection.North);
-        UpdateLight(TrafficLight.RoadDirection.South);
-        UpdateLight(TrafficLight.RoadDirection.East);
-        UpdateLight(TrafficLight.RoadDirection.West);
     }
 
     public bool IsLaneGreen(int laneID){

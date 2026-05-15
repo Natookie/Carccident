@@ -3,12 +3,14 @@ using UnityEngine;
 public class TrafficLight : MonoBehaviour
 {
     [Header("REFERENCES")]
-    public MeshRenderer lightRenderer;
+    public MeshRenderer straightLightRenderer;
+    public MeshRenderer rightLightRenderer;
     public int lightID;
     
     private TrafficLightManager manager;
     private RoadDirection roadDirection;
-    private bool isGreen = false;
+    private bool isStraightGreen = false;
+    private bool isRightGreen = false;
     
     public enum RoadDirection
     {
@@ -20,7 +22,15 @@ public class TrafficLight : MonoBehaviour
     
     void Start(){
         manager = TrafficLightManager.Instance;
-        if(lightRenderer == null) lightRenderer = GetComponent<MeshRenderer>();
+        
+        if(straightLightRenderer == null){
+            Debug.LogError($"Straight light renderer not assigned for light {lightID}!");
+        }
+        
+        if(rightLightRenderer == null){
+            Debug.LogError($"Right light renderer not assigned for light {lightID}!");
+        }
+        
         if(GetComponent<Collider>() == null) gameObject.AddComponent<BoxCollider>();
         
         switch(lightID){
@@ -34,32 +44,51 @@ public class TrafficLight : MonoBehaviour
                 break;
         }
 
-        SetRed();
+        SetStraightRed();
+        SetRightRed();
     }
 
-    public void SetGreen(){
-        isGreen = true;
-        if(lightRenderer != null && manager != null) 
-            lightRenderer.material = manager.greenMaterial;
+    #region STRAIGHT
+    public void SetStraightGreen(){
+        isStraightGreen = true;
+        if(straightLightRenderer != null && manager != null) straightLightRenderer.material = manager.greenMaterial;
+        TrafficUI.Instance.UpdateSprite(TrafficUI.TrafficColor.Green, TrafficUI.TrafficDirection.Straight);
     }
-    
-    public void SetRed(){
-        isGreen = false;
-        if(lightRenderer != null && manager != null) 
-            lightRenderer.material = manager.redMaterial;
+    public void SetStraightRed(){
+        isStraightGreen = false;
+        if(straightLightRenderer != null && manager != null) straightLightRenderer.material = manager.redMaterial;
+        TrafficUI.Instance.UpdateSprite(TrafficUI.TrafficColor.Red, TrafficUI.TrafficDirection.Straight);
     }
-    
-    public void SetYellow(){
-        if(lightRenderer != null && manager != null) 
-            lightRenderer.material = manager.yellowMaterial;
+    public void SetStraightYellow(){
+        if(straightLightRenderer != null && manager != null) straightLightRenderer.material = manager.yellowMaterial;
+        TrafficUI.Instance.UpdateSprite(TrafficUI.TrafficColor.Yellow, TrafficUI.TrafficDirection.Straight);
     }
+    #endregion
     
-    public bool IsGreen() => isGreen;
+    #region RIGHT
+    public void SetRightGreen(){
+        isRightGreen = true;
+        if(rightLightRenderer != null && manager != null) rightLightRenderer.material = manager.greenMaterial;
+        TrafficUI.Instance.UpdateSprite(TrafficUI.TrafficColor.Green, TrafficUI.TrafficDirection.Right);
+    }
+    public void SetRightRed(){
+        isRightGreen = false;
+        if(rightLightRenderer != null && manager != null) rightLightRenderer.material = manager.redMaterial;
+        TrafficUI.Instance.UpdateSprite(TrafficUI.TrafficColor.Red, TrafficUI.TrafficDirection.Right);
+    }
+    public void SetRightYellow(){
+        if(rightLightRenderer != null && manager != null) rightLightRenderer.material = manager.yellowMaterial;
+        TrafficUI.Instance.UpdateSprite(TrafficUI.TrafficColor.Yellow, TrafficUI.TrafficDirection.Right);
+    }
+    #endregion
+    
+    public bool IsStraightGreen() => isStraightGreen;
+    public bool IsRightGreen() => isRightGreen;
     public int GetLightID() => lightID;
     public RoadDirection GetRoadDirection() => roadDirection;
 
     void OnMouseDown(){
-        if(!GameManager.Instance.isGameInitialized) return;
+        //if(!GameManager.Instance.isGameInitialized) return;
         TrafficUI.Instance.ShowPrompt(this);
     }
 }
