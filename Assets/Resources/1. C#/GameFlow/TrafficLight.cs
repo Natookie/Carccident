@@ -23,13 +23,8 @@ public class TrafficLight : MonoBehaviour
     void Start(){
         manager = TrafficLightManager.Instance;
         
-        if(straightLightRenderer == null){
-            Debug.LogError($"Straight light renderer not assigned for light {lightID}!");
-        }
-        
-        if(rightLightRenderer == null){
-            Debug.LogError($"Right light renderer not assigned for light {lightID}!");
-        }
+        if(straightLightRenderer == null) Debug.LogError($"Straight light renderer not assigned for light {lightID}!");
+        if(rightLightRenderer == null) Debug.LogError($"Right light renderer not assigned for light {lightID}!");
         
         if(GetComponent<Collider>() == null) gameObject.AddComponent<BoxCollider>();
         
@@ -88,7 +83,7 @@ public class TrafficLight : MonoBehaviour
     public RoadDirection GetRoadDirection() => roadDirection;
 
     void OnMouseDown(){
-        //if(!GameManager.Instance.isGameInitialized) return;
+        if(!GameManager.Instance.isGameInitialized) return;
         TrafficUI.Instance.ShowPrompt(this);
     }
 }

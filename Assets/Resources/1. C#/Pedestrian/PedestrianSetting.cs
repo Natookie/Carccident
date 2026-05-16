@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PedestrianSettings", menuName = "Game/Pedestrian Settings")]
+[CreateAssetMenu(fileName = "PedestrianSettings", menuName = "Pedes/Pedestrian Settings")]
 public class PedestrianSettings : ScriptableObject
 {
     [Header("MOVEMENT")]

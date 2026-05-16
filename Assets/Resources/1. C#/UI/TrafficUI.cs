@@ -1,5 +1,7 @@
 using UnityEngine;
 using Nova;
+using System.Collections;
+using System.Collections.Generic;
 
 public class TrafficUI : MonoBehaviour
 {
@@ -7,7 +9,8 @@ public class TrafficUI : MonoBehaviour
 
     [Header("REFERENCES")]
     [SerializeField] private UIBlock2D panel;
-    [SerializeField] private TextBlock trafficDestination;
+    [SerializeField] private TextBlock trafficDirection;
+    [SerializeField] private DestinationText[] destinationTexts;
     [SerializeField] private Sprite[] trafficSprite = new Sprite[3];
     [Space(10)]
     [SerializeField] private UIBlock2D straightBlock;
@@ -22,6 +25,25 @@ public class TrafficUI : MonoBehaviour
     private int currentSelection = 0;
     private TrafficLight selectedTrafficLight;
     private TrafficLightManager.ClickType clickType;
+    private bool shouldBeActive = false;
+
+    private Dictionary<TrafficLight.RoadDirection, DestinationData[]> destinationMap;
+
+    [System.Serializable]
+    private class DestinationText{
+        public TextBlock nameText;
+        public TextBlock rangeText;
+    }
+
+    private class DestinationData{
+        public string Name;
+        public int Distance;
+
+        public DestinationData(string name, int distance){
+            Name = name;
+            Distance = distance;
+        }
+    }
 
     void Awake(){
         if(Instance != null && Instance != this){
@@ -30,18 +52,49 @@ public class TrafficUI : MonoBehaviour
         }
         Instance = this;
         
+        InitializeDestinationMap();
+        
         foreach(UIBlock2D block in straightIndicators) block.AddGestureHandler<Gesture.OnPress>(OnStraightButtonPressed);
         foreach(UIBlock2D block in rightIndicators) block.AddGestureHandler<Gesture.OnPress>(OnRightButtonPressed);
+    }
+
+    void InitializeDestinationMap(){
+        destinationMap = new Dictionary<TrafficLight.RoadDirection, DestinationData[]>();
+        destinationMap[TrafficLight.RoadDirection.North] = new DestinationData[]{
+            new DestinationData("^ LOGIC HQ", 12),
+            new DestinationData("> Petir Habor", 48)
+        };
+        destinationMap[TrafficLight.RoadDirection.South] = new DestinationData[]{
+            new DestinationData("^ Seed Biji", 9),
+            new DestinationData("> aGATe", 31)
+        };
+        destinationMap[TrafficLight.RoadDirection.East] = new DestinationData[]{
+            new DestinationData("^ Projek Impek", 15),
+            new DestinationData("> Dead Signal", 67)
+        };
+        destinationMap[TrafficLight.RoadDirection.West] = new DestinationData[]{
+            new DestinationData("^ Galih Square", 11),
+            new DestinationData("> Fajar District", 54)
+        };
     }
 
     void Start(){
         HidePrompt();
     }
 
+    void Update(){
+        if(!panel.gameObject.activeSelf) return;
+
+        if(Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0)){
+            StartCoroutine(DelayedHidePrompt());
+        }
+    }
+
     public void ShowPrompt(TrafficLight tl){
         selectedTrafficLight = tl;
         panel.gameObject.SetActive(true);
 
+        shouldBeActive = true;
         TrafficLightManager.LaneStatus laneStatus = TrafficLightManager.Instance.GetLaneStatus(tl.GetRoadDirection());
         UpdateUI(laneStatus);
     }
@@ -51,9 +104,27 @@ public class TrafficUI : MonoBehaviour
         selectedTrafficLight = null;
     }
 
+    IEnumerator DelayedHidePrompt(){
+        yield return new WaitForSeconds(0.15f);
+        if(!shouldBeActive){
+            HidePrompt();
+            yield break;
+        }
+        shouldBeActive = false;
+    }
+
     public void UpdateUI(TrafficLightManager.LaneStatus laneStatus){
         if(selectedTrafficLight == null) return;
-        trafficDestination.Text = $"{selectedTrafficLight.GetRoadDirection().ToString()}";
+        
+        TrafficLight.RoadDirection direction = selectedTrafficLight.GetRoadDirection();
+        trafficDirection.Text = $"{direction.ToString()} Road";
+        
+        if(destinationMap.TryGetValue(direction, out var destinations)){
+            for(int i = 0; i < destinations.Length && i < destinationTexts.Length; i++){
+                destinationTexts[i].nameText.Text = destinations[i].Name;
+                destinationTexts[i].rangeText.Text = $"{destinations[i].Distance} km";
+            }
+        }
         
         if(laneStatus.straightActive) UpdateSprite(TrafficColor.Green, TrafficDirection.Straight);
         else UpdateSprite(TrafficColor.Red, TrafficDirection.Straight);
@@ -63,47 +134,44 @@ public class TrafficUI : MonoBehaviour
     }
 
     public void UpdateSprite(TrafficColor tc, TrafficDirection td){
-        ClearAllShadows();
-        
         if(td == TrafficDirection.Straight){
+            foreach(UIBlock2D block in straightIndicators)
+                if(block != null) block.Shadow.Enabled = false;
+
             switch(tc){
                 case TrafficColor.Red:
-                    if(trafficSprite.Length > 0) straightBlock.SetImage(trafficSprite[0]);
+                    straightBlock.SetImage(trafficSprite[0]);
                     straightIndicators[0].Shadow.Enabled = true;
                     break;
                 case TrafficColor.Yellow:
-                    if(trafficSprite.Length > 1) straightBlock.SetImage(trafficSprite[1]);
+                    straightBlock.SetImage(trafficSprite[1]);
                     straightIndicators[1].Shadow.Enabled = true;
                     break;
                 case TrafficColor.Green:
-                    if(trafficSprite.Length > 2) straightBlock.SetImage(trafficSprite[2]);
+                    straightBlock.SetImage(trafficSprite[2]);
                     straightIndicators[2].Shadow.Enabled = true;
                     break;
             }
         }
         else if(td == TrafficDirection.Right){
+            foreach(UIBlock2D block in rightIndicators)
+                if(block != null) block.Shadow.Enabled = false;
+
             switch(tc){
                 case TrafficColor.Red:
-                    if(trafficSprite.Length > 0) rightBlock.SetImage(trafficSprite[0]);
+                    rightBlock.SetImage(trafficSprite[0]);
                     rightIndicators[0].Shadow.Enabled = true;
                     break;
                 case TrafficColor.Yellow:
-                    if(trafficSprite.Length > 1) rightBlock.SetImage(trafficSprite[1]);
+                    rightBlock.SetImage(trafficSprite[1]);
                     rightIndicators[1].Shadow.Enabled = true;
                     break;
                 case TrafficColor.Green:
-                    if(trafficSprite.Length > 2) rightBlock.SetImage(trafficSprite[2]);
+                    rightBlock.SetImage(trafficSprite[2]);
                     rightIndicators[2].Shadow.Enabled = true;
                     break;
             }
         }
-    }
-    
-    void ClearAllShadows(){
-        foreach(UIBlock2D block in straightIndicators)
-            if(block != null) block.Shadow.Enabled = false;
-        foreach(UIBlock2D block in rightIndicators)
-            if(block != null) block.Shadow.Enabled = false;
     }
 
     void OnStraightButtonPressed(Gesture.OnPress evt){
@@ -117,6 +185,7 @@ public class TrafficUI : MonoBehaviour
             }
         }
 
+        shouldBeActive = true;
         if(TrafficLightManager.Instance == null) return;
         bool isGreen = currentSelection == 2;
 
@@ -135,6 +204,7 @@ public class TrafficUI : MonoBehaviour
             }
         }
 
+        shouldBeActive = true;
         if(TrafficLightManager.Instance == null) return;
         bool isGreen = currentSelection == 2;
 

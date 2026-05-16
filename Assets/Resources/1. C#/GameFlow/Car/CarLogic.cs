@@ -2,78 +2,58 @@
 
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using NaughtyAttributes;
 
 public class CarLogic : MonoBehaviour
 {
-    [Foldout("CAR SETTINGS")][SerializeField] private float speed = 10f;
-    [Foldout("CAR SETTINGS")][SerializeField] private float speedVariation = 2f;
-    [Space(5)]
-    [Foldout("CAR SETTINGS")][SerializeField] private float reactionTime = 0.5f;
-    [Foldout("CAR SETTINGS")][SerializeField] private float reactionTimeVariation = 0.3f;
-    [Space(5)]
-    [Foldout("CAR SETTINGS")][SerializeField] private float accelerationRate = 5f;
-    [Foldout("CAR SETTINGS")][SerializeField] private float accelerationVariation = 1.5f;
-    [Space(5)]
-    [Foldout("CAR SETTINGS")][SerializeField] private float decelerationRate = 8f;
-    [Foldout("CAR SETTINGS")][SerializeField] private float decelerationVariation = 2f;
-
-    [Foldout("TURNING SETTINGS")][SerializeField] private float turnSpeed = 5f;
-    [Foldout("TURNING SETTINGS")][SerializeField] private float turnSpeedVariation = 1.5f;
-    [Space(5)]
-    [Foldout("TURNING SETTINGS")][SerializeField] private float exitOffset = 5f;
-    [Foldout("TURNING SETTINGS")][SerializeField] private float bezierOffset = 2f;
-
-    [Foldout("RAYCAST SETTINGS")][SerializeField] private float raycastDistance = 30f;
-    [Foldout("RAYCAST SETTINGS")][SerializeField] private LayerMask obstacleLayerMask;
-    [Foldout("RAYCAST SETTINGS")][SerializeField] private float minFollowDistance = 4f;
-    [Foldout("RAYCAST SETTINGS")][SerializeField] private float followDistanceVariation = 1.5f;
-
-    [Header("PERCEPTION ZONES")]
-    [SerializeField] private float farZoneDistance = 20f;
-    [SerializeField] private float mediumZoneDistance = 12f;
-    [SerializeField] private float closeZoneDistance = 6f;
-
-    [Header("COLLISION")]
-    [SerializeField] private float knockUpForce = 12f;
-    [SerializeField] private float knockBackForce = 15f;
-    [SerializeField] private float despawnDelay = 1f;
-
-    [Header("PATIENT SETTINGS")]
-    [SerializeField] private float patientTimer = 0f;
-    [SerializeField] private float patienceThreshold = 8f;
+    [SerializeField] private CarConfiguration carConfig;
+    [SerializeField] private bool showData;
+    [SerializeField] private bool showBool;
 
     [Header("CAR CONFIGURATION")]
-    [ReadOnly] public int carID;
-    [ReadOnly] public int laneID;
-    [ReadOnly] public TurnIntent turnIntent;
+    [ShowIf("showData"), ReadOnly] public int carID;
+    [ShowIf("showData"), ReadOnly] public int laneID;
+    [ShowIf("showData"), ReadOnly] public TurnIntent turnIntent;
 
     [Header("MOVEMENT")]
-    [ReadOnly] public Vector3 moveDirection;
-    [ReadOnly] public float distanceTraveled;
-    [ReadOnly] public bool isTurning;
+    [ShowIf("showData"), ReadOnly] public Vector3 moveDirection;
+    [ShowIf("showData"), ReadOnly] public float distanceTraveled;
 
     [Header("ACTUAL STATS")]
-    [SerializeField] private bool showTrueValue = true;
-    [Space(5)]
-    [ReadOnly, ShowIf("showTrueValue")] public float actualMaxSpeed;
-    [ReadOnly, ShowIf("showTrueValue")] public float actualAcceleration;
-    [ReadOnly, ShowIf("showTrueValue")] public float actualDeceleration;
-    [ReadOnly, ShowIf("showTrueValue")] public float actualReactionTime;
-    [ReadOnly, ShowIf("showTrueValue")] public float actualTurnSpeed;
-    [ReadOnly, ShowIf("showTrueValue")] public float actualFollowDistance;
+    [ShowIf("showData"), ReadOnly] public float actualMaxSpeed;
+    [ShowIf("showData"), ReadOnly] public float actualAcceleration;
+    [ShowIf("showData"), ReadOnly] public float actualDeceleration;
+    [ShowIf("showData"), ReadOnly] public float actualReactionTime;
+    [ShowIf("showData"), ReadOnly] public float actualTurnSpeed;
+    [ShowIf("showData"), ReadOnly] public float actualFollowDistance;
 
     [Header("SHOW TURN VALUES")]
-    [SerializeField] private bool showTurnValues = true;
-    [ShowIf("showTurnValues"), ReadOnly] public Vector3 turnStartPoint;
-    [ShowIf("showTurnValues"), ReadOnly] public Vector3 turnControlPoint;
-    [ShowIf("showTurnValues"), ReadOnly] public Vector3 turnEndPoint;
-    [ShowIf("showTurnValues"), ReadOnly] public Vector3 turnFinalDestination;
+    [ShowIf("showData"), ReadOnly] public Vector3 turnStartPoint;
+    [ShowIf("showData"), ReadOnly] public Vector3 turnControlPoint;
+    [ShowIf("showData"), ReadOnly] public Vector3 turnEndPoint;
+    [ShowIf("showData"), ReadOnly] public Vector3 turnFinalDestination;
     [Space(10)]
-    [ShowIf("showTurnValues"), ReadOnly] public float turnProgress = 0f;
-    [ShowIf("showTurnValues"), ReadOnly] public bool hasReachedTurnPoint = false;
-    [ShowIf("showTurnValues"), ReadOnly] public Vector3 originalMoveDirection;
+    [ShowIf("showData"), ReadOnly] public float turnProgress = 0f;
+    [ShowIf("showData"), ReadOnly] public Vector3 originalMoveDirection;
+
+    [Header("SHOW BOOLEAN")]
+    [ShowIf("showBool"), ReadOnly] public bool isTurning;
+    [ShowIf("showBool"), ReadOnly] public bool hasReachedTurnPoint = false;
+    [Space(10)]
+    [ShowIf("showBool"), ReadOnly] public bool isStopped = true;
+    [ShowIf("showBool"), ReadOnly] public bool isWaitingForGreen = false;
+    [ShowIf("showBool"), ReadOnly] public bool hasPassedLight = false;
+    [Space(10)]
+    [ShowIf("showBool"), ReadOnly] public bool isRoadRage = false;
+    [ShowIf("showBool"), ReadOnly] public bool hasRaged = false;
+    [Space(10)]
+    [ShowIf("showBool"), ReadOnly] public bool isAligningAfterTurn = false;
+    [ShowIf("showBool"), ReadOnly] public bool isAligningAfterRage = false;
+    [ShowIf("showBool"), ReadOnly] public bool isCollisionDisabled = false;
+    [Space(10)]
+    [ShowIf("showBool"), ReadOnly] public bool pendingStopDecision = false;
+    [ShowIf("showBool"), ReadOnly] public bool bufferedShouldStop = false;
+    [ShowIf("showBool"), ReadOnly] public bool isHesitating = false;
 
     [Header("REFERENCES")]
     [ReadOnly] public Transform turnTarget;
@@ -87,29 +67,17 @@ public class CarLogic : MonoBehaviour
     private Collider carCollider;
     private Renderer carRenderer;
 
+    private float patientTimer = 0f;
     private float currentSpeed = 0f;
-    private bool isStopped = true;
-    private bool isWaitingForGreen = false;
-    private bool hasPassedLight = false;
-    private bool isRoadRage = false;
-    private bool hasRaged = false;
     private Vector3 lastPosition;
     private float roadLength;
 
-    private bool isAligningAfterTurn = false;
-    private bool isAligningAfterRage = false;
     private Quaternion targetLaneRotation;
     private const float ROTATION_ALIGN_SPEED = 6f;
     private const float ROTATION_ALIGNMENT_THRESHOLD = 0.5f;
 
-    private bool isCollisionDisabled = false;
     private float collisionDisableTimer = 0f;
-
-    private bool pendingStopDecision = false;
-    private bool bufferedShouldStop = false;
     private float reactionTimer = 0f;
-
-    private bool isHesitating = false;
     private float hesitationTimer = 0f;
     private float hesitationDuration = 0f;
 
@@ -123,8 +91,20 @@ public class CarLogic : MonoBehaviour
     private float brakingNoise = 0f;
     private float brakingNoiseTimer = 0f;
     private const float BRAKING_NOISE_INTERVAL = 0.15f;
-
     private const float NO_OBSTACLE = 999f;
+    private const float DESPAWN_DELAY = 5f;
+    private const float X_ROT_DEFAULT = -90f;
+
+    private float exitOffset;
+    private float bezierOffset;
+    private float raycastDistance;
+    private LayerMask obstacleLayerMask;
+    private float knockUpForce;
+    private float knockBackForce;
+    private float patienceThreshold;
+    private float farZoneDistance;
+    private float mediumZoneDistance;
+    private float closeZoneDistance;
 
     public enum TurnIntent{
         Straight,
@@ -150,9 +130,10 @@ public class CarLogic : MonoBehaviour
         lastPosition = startPos;
         
         ResetAllStates();
-        
         InitializeComponent();
-        InitializeActualValue();
+        
+        if(carConfig != null) LoadConfiguration();
+        else Debug.LogError($"Car {carID} has no CarConfiguration assigned!", this);
         
         SetMovementDirection();
         SetLayer();
@@ -160,20 +141,28 @@ public class CarLogic : MonoBehaviour
         transform.rotation = GetRotationForLane(laneID);
     }
 
-    void InitializeActualValue(){
-        actualMaxSpeed = speed + Random.Range(-speedVariation, speedVariation);
-        actualAcceleration = accelerationRate + Random.Range(-accelerationVariation, accelerationVariation);
-        actualDeceleration = decelerationRate + Random.Range(-decelerationVariation, decelerationVariation);
-        actualReactionTime = reactionTime + Random.Range(-reactionTimeVariation, reactionTimeVariation);
-        actualTurnSpeed = turnSpeed + Random.Range(-turnSpeedVariation, turnSpeedVariation);
-        actualFollowDistance = minFollowDistance + Random.Range(-followDistanceVariation, followDistanceVariation);
+   void LoadConfiguration(){
+        CarRuntimeStats stats = new CarRuntimeStats();
+        stats.RandomizeStats(carConfig);
         
-        actualMaxSpeed = Mathf.Max(15f, actualMaxSpeed);
-        actualAcceleration = Mathf.Max(3f, actualAcceleration);
-        actualDeceleration = Mathf.Max(4f, actualDeceleration);
-        actualReactionTime = Mathf.Max(0.3f, actualReactionTime);
-        actualTurnSpeed = Mathf.Max(3f, actualTurnSpeed);
-        actualFollowDistance = Mathf.Max(2f, actualFollowDistance);
+        actualMaxSpeed = stats.actualMaxSpeed;
+        actualAcceleration = stats.actualAcceleration;
+        actualDeceleration = stats.actualDeceleration;
+        actualReactionTime = stats.actualReactionTime;
+        actualTurnSpeed = stats.actualTurnSpeed;
+        actualFollowDistance = stats.actualFollowDistance;
+        
+        //Load values from config
+        exitOffset = carConfig.exitOffset;
+        bezierOffset = carConfig.bezierOffset;
+        raycastDistance = carConfig.raycastDistance;
+        obstacleLayerMask = carConfig.obstacleLayerMask;
+        farZoneDistance = carConfig.farZoneDistance;
+        mediumZoneDistance = carConfig.mediumZoneDistance;
+        closeZoneDistance = carConfig.closeZoneDistance;
+        knockUpForce = carConfig.knockUpForce;
+        knockBackForce = carConfig.knockBackForce;
+        patienceThreshold = carConfig.patienceThreshold;
     }
 
     void InitializeComponent(){
@@ -184,6 +173,7 @@ public class CarLogic : MonoBehaviour
         if(carCollider == null) carCollider = gameObject.AddComponent<BoxCollider>();
 
         visualTransform = transform.GetChild(0);
+        visualTransform.localRotation = Quaternion.Euler(X_ROT_DEFAULT, 0f, 0f);
         carRenderer = visualTransform.GetComponent<Renderer>();
         
         rb.isKinematic = false;
@@ -252,7 +242,7 @@ public class CarLogic : MonoBehaviour
         //Visual states
         if(visualTransform != null){
             visualTransform.localPosition = Vector3.zero;
-            visualTransform.localRotation = Quaternion.identity;
+            visualTransform.localRotation = Quaternion.Euler(X_ROT_DEFAULT, 0f, 0f);
         }
         
         //Rigidbody states
@@ -262,10 +252,7 @@ public class CarLogic : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
         
-        //Collider states
         if(carCollider != null) carCollider.enabled = true;
-        
-        //Renderer states
         if(carRenderer != null) carRenderer.material.color = originalColor;
 
         //Clear coroutine references
@@ -273,7 +260,6 @@ public class CarLogic : MonoBehaviour
             StopCoroutine(currentRageCoroutine);
             currentRageCoroutine = null;
         }
-        
         if(currentDespawnCoroutine != null){
             StopCoroutine(currentDespawnCoroutine);
             currentDespawnCoroutine = null;
@@ -335,7 +321,7 @@ public class CarLogic : MonoBehaviour
 
         UpdatePerceptionCache();
         
-        if(turnIntent == TurnIntent.Right && turnTarget != null && !isCollisionDisabled && !isRoadRage){
+        if(turnIntent == TurnIntent.Right && turnTarget != null && !isCollisionDisabled){
             if(!hasReachedTurnPoint) HandleTurning();
             if(isTurning) UpdateTurn();
         }
@@ -353,6 +339,11 @@ public class CarLogic : MonoBehaviour
             }
 
             HandleReactionAndMovement(reactionDelayedStop);
+        }
+
+        if(isWaitingForGreen && !isTurning && !hasRaged){
+            currentSpeed = 0f;
+            isStopped = true;
         }
 
         if(isCollisionDisabled){
@@ -425,23 +416,22 @@ public class CarLogic : MonoBehaviour
     void HandleTrafficLight(){
         bool isGreen = trafficManager != null && trafficManager.IsLaneGreen(laneID);
         float distanceToStopLine = GetDistanceToStopLine();
-
-        if(distanceToStopLine > 0f && distanceToStopLine < 2f && !isGreen){
+        
+        if(isGreen){
+            if(isWaitingForGreen){
+                isWaitingForGreen = false;
+                hasPassedLight = true;
+                if(isStopped) TriggerHesitation();
+            }
+            return;
+        }
+        
+        if(distanceToStopLine > 0f && distanceToStopLine < 2f){
             isWaitingForGreen = true;
             return;
         }
-
-        if(distanceToStopLine < 8f){
-            if(!isGreen && !hasPassedLight) isWaitingForGreen = true;
-            else if(isGreen){
-                bool wasWaiting = isWaitingForGreen;
-                isWaitingForGreen = false;
-                hasPassedLight = true;
-
-                if(wasWaiting && isStopped) TriggerHesitation();
-            }
-        }
-
+        
+        if(distanceToStopLine < 3f && !hasPassedLight) isWaitingForGreen = true;
         if(distanceToStopLine < -5f){
             hasPassedLight = false;
             isWaitingForGreen = false;
@@ -471,7 +461,7 @@ public class CarLogic : MonoBehaviour
         if(isWaitingForGreen) return true;
 
         float distanceToStopLine = GetDistanceToStopLine();
-        if(distanceToStopLine > 0f && distanceToStopLine < 8f){
+        if(distanceToStopLine > 0f && distanceToStopLine < 1f){
             bool isGreen = trafficManager != null && trafficManager.IsLaneGreen(laneID);
             if(!isGreen) return true;
         }
@@ -559,16 +549,27 @@ public class CarLogic : MonoBehaviour
 
     #region TURNING
     void HandleTurning(){
-        if(turnIntent == TurnIntent.Right && !hasRaged){
-            bool isRightAllowed = trafficManager != null && trafficManager.IsLaneGreen(laneID);
-            if(!isRightAllowed) return;
-        }
-        
+        bool isRightAllowed = trafficManager != null && trafficManager.IsLaneGreen(laneID);
         float distanceToTurnPoint = GetDistanceAlongMoveDirection(turnTarget.position);
-        if(distanceToTurnPoint < 12f && !hasReachedTurnPoint){
-            currentSpeed = Mathf.Min(currentSpeed, 5f);
-            StartTurn();
-            hasReachedTurnPoint = true;
+        
+        if(hasRaged) isRightAllowed = true;
+        if(distanceToTurnPoint < 1f){
+            if(!isRightAllowed){
+                isWaitingForGreen = true;
+                currentSpeed = Mathf.Max(0, currentSpeed - actualDeceleration * Time.deltaTime);
+                
+                if(currentSpeed < 0.1f){
+                    currentSpeed = 0f;
+                    isStopped = true;
+                }
+                return; 
+            }
+            else if(!hasReachedTurnPoint){
+                currentSpeed = Mathf.Min(currentSpeed, 5f);
+                StartTurn();
+                hasReachedTurnPoint = true;
+                isWaitingForGreen = false;
+            }
         }
     }
 
@@ -586,7 +587,7 @@ public class CarLogic : MonoBehaviour
         rb.isKinematic = true;
 
         currentSpeed = Mathf.Min(currentSpeed, 5f);
-        //Debug.Log($"Car {carID}: Turn START - DistanceTraveled: {distanceTraveled:F2}", this);
+        // Debug.Log($"Car {carID}: Turn START - DistanceTraveled: {distanceTraveled:F2}", this);
 
         Vector3 turnCenter = turnTarget.position;
         Vector3 turnDirection = GetTurnDirection();
@@ -757,7 +758,7 @@ public class CarLogic : MonoBehaviour
             visualTransform.localPosition = new Vector3(shakeX, 0, shakeZ);
             
             float tiltAngle = Mathf.Sin(Time.time * 15f) * (fill * 3f);
-            visualTransform.localRotation = Quaternion.Euler(0f, 0f, tiltAngle);
+            visualTransform.localRotation = Quaternion.Euler(X_ROT_DEFAULT + tiltAngle, 0f, 0f);
         }
     }
 
@@ -765,7 +766,7 @@ public class CarLogic : MonoBehaviour
         patientTimer = 0f;
         if(visualTransform != null){
             visualTransform.localPosition = Vector3.zero;
-            visualTransform.localRotation = Quaternion.identity;
+            visualTransform.localRotation = Quaternion.Euler(X_ROT_DEFAULT, 0f, 0f);
         }
     }
     
@@ -800,7 +801,8 @@ public class CarLogic : MonoBehaviour
         float rageDuration = 2f;
         float elapsed = 0f;
         
-        float originalY = visualTransform.eulerAngles.y;
+        Quaternion defaultRotation = Quaternion.Euler(X_ROT_DEFAULT, 0f, 0f);
+        float defaultY = defaultRotation.eulerAngles.y;
         
         while(elapsed < rageDuration){
             if(this == null || gameObject == null) yield break;
@@ -810,19 +812,20 @@ public class CarLogic : MonoBehaviour
             
             if(carRenderer != null) carRenderer.material.color = Color.Lerp(originalColor, Color.red, t);
             
-            float rotX = Mathf.Sin(Time.time * 30f) * (15f * (1f - t));
+            float rotX = X_ROT_DEFAULT + (Mathf.Sin(Time.time * 30f) * (15f * (1f - t)));
             float rotZ = Mathf.Cos(Time.time * 28f) * (10f * (1f - t));
             float rotY = Mathf.Sin(Time.time * 8f) * (3f * (1f - t));
-            float finalY = originalY + rotY;
             
-            visualTransform.rotation = Quaternion.Euler(rotX, finalY, rotZ);
+            visualTransform.localRotation = Quaternion.Euler(rotX, rotY, rotZ);
             yield return null;
         }
         
         if(carRenderer != null) carRenderer.material.color = originalColor;
         isRoadRage = false;
         
-        if(visualTransform != null) visualTransform.localRotation = Quaternion.identity;
+        if(visualTransform != null) 
+            visualTransform.localRotation = Quaternion.Euler(X_ROT_DEFAULT, 0f, 0f);
+        
         if(turnIntent == TurnIntent.Straight){
             targetLaneRotation = GetRotationForLane(laneID);
             isAligningAfterRage = true;
@@ -963,7 +966,7 @@ public class CarLogic : MonoBehaviour
     }
 
     IEnumerator DelayedDespawn(){
-        yield return new WaitForSeconds(despawnDelay);
+        yield return new WaitForSeconds(DESPAWN_DELAY);
         if(this != null && gameObject != null) ReturnToPool();
     }
 

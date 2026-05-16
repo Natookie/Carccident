@@ -57,10 +57,7 @@ public class TrafficLightManager : MonoBehaviour
         if(greenMaterial == null) Debug.LogError("Green material not assigned!");
         if(yellowMaterial == null) Debug.LogError("Yellow material not assigned!");
 
-        if(testAllLanesGreen){
-            SetAllLanesGreen(true);
-        }
-        
+        if(testAllLanesGreen) SetAllLanesGreen(true);
         UpdateAllLights();
     }
 
@@ -85,14 +82,9 @@ public class TrafficLightManager : MonoBehaviour
         bool previousRight = lane.rightActive;
         
         switch(clickType){
-            case ClickType.Straight:
-                lane.straightActive = turnGreen;
-                break;
-            case ClickType.Right:
-                lane.rightActive = turnGreen;
-                break;
-            case ClickType.Pedestrian:
-                break;
+            case ClickType.Straight: lane.straightActive = turnGreen; break;
+            case ClickType.Right: lane.rightActive = turnGreen; break;
+            case ClickType.Pedestrian: break;
         }
         
         TrafficUI.Instance.UpdateUI(lane);
