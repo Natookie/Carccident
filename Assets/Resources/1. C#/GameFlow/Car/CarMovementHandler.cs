@@ -12,7 +12,6 @@ public class CarMovementHandler
 
     public void AlignToLaneRotation(CarLogic car, Quaternion targetLaneRotation, bool isCollisionDisabled, ref bool isAligningAfterTurn, ref bool isAligningAfterRage){
         if(isCollisionDisabled) return;
-        Debug.Log("dk");
 
         float angle = Quaternion.Angle(car.transform.rotation, targetLaneRotation);
         if(angle <= rotationAlignmentThreshold){
