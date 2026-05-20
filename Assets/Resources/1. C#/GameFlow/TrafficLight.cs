@@ -83,7 +83,8 @@ public class TrafficLight : MonoBehaviour
     public RoadDirection GetRoadDirection() => roadDirection;
 
     void OnMouseDown(){
-        if(!GameManager.Instance.isGameInitialized) return;
+        if(!GameManager.Instance.isGameInitialized || GameManager.Instance.isGameOver) return;
+        if(PauseUI.Instance.IsPaused()) return;
         TrafficUI.Instance.ShowPrompt(this);
     }
 }

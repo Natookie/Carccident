@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("SFX")]
     public AudioClip buttonClickSFX;
+    public AudioClip startButtonSFX;
     public AudioClip trafficLightChangeSFX;
     public AudioClip carPassSFX;
     public AudioClip crashSFX;
@@ -63,6 +64,24 @@ public class AudioManager : MonoBehaviour
     public void PlayGameOver() => PlaySFX(gameOverSFX);
     public void PlayUpgrade() => PlaySFX(upgradeSFX);
     public void PlayNotEnoughMoney() => PlaySFX(notEnoughMoneySFX);
+    public void PlayStartButton() => PlaySFX(startButtonSFX);
+
+    public void PlaySirene(AudioClip clip, bool loop){
+        if(clip == null || sfxSource == null) return;
+        
+        if(loop){
+            sfxSource.loop = true;
+            sfxSource.clip = clip;
+            sfxSource.Play();
+        }
+        else sfxSource.PlayOneShot(clip, sfxVolume);
+    }
+    public void StopSirene(){
+        if(sfxSource != null){
+            sfxSource.loop = false;
+            sfxSource.Stop();
+        }
+    }
 
     public void SetVolume(float volume){
         bgmVolume = volume;
@@ -75,7 +94,6 @@ public class AudioManager : MonoBehaviour
             if(currentBGMIndex != 1){
                 currentBGMIndex = 1;
                 PlayBGM(1);
-                Debug.Log("test");
             }
         }
         else{

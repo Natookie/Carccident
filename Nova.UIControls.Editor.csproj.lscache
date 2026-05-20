@@ -348,7 +348,6 @@ Library/ScriptAssemblies/
  UnityEngine.TestRunner.dll
  UnityEngine.UI.dll
 Temp/bin/Debug/
- Nova.Compat.dll
  Nova.dll
  Nova.UIControls.dll
 

@@ -3,72 +3,57 @@ using NaughtyAttributes;
 
 public class SkillManager : MonoBehaviour
 {
-    public enum SkillType
-    {
+    [Header("SKILL LEVELS")]
+    public int sleepyModeLevel = 1;
+    public int greenWaveAddictionLevel = 1;
+    public int oopsieRecoverySystemLevel = 1;
+    
+    [Header("COST SETTINGS")]
+    [SerializeField] private int baseCost = 80;
+    [SerializeField] private float costMultiplier = 1.45f;
+    [SerializeField] private int maxLevel = 15;
+    
+    public enum SkillType{
         SleepyMode,
         GreenWaveAddiction,
         OopsieRecoverySystem
-    }
-
-    public int sleepyModeLevel;
-    public int greenWaveAddictionLevel;
-    public int OopsieRecoverySystemLevel;
-    
-    [Header("UPGRADE SETTINGS")]
-    public int maxLevel = 99;
-    
-    [Header("COST FORMULA")]
-    [SerializeField] private int baseUpgradeCost = 50;
-    [SerializeField] private float costPower = 1.3f;
-
-    public void AddLevel(SkillType type){
-        if(!CanUpgrade(type)) {
-            AudioManager.Instance.PlayNotEnoughMoney();            
-            return;
-        }
-        
-        AudioManager.Instance.PlayUpgrade();            
-        switch(type){
-            case SkillType.SleepyMode:
-                sleepyModeLevel++;
-                Debug.Log($"Sleepy Mode upgraded to level {sleepyModeLevel}");
-                break;
-            case SkillType.GreenWaveAddiction:
-                greenWaveAddictionLevel++;
-                Debug.Log($"Green Wave Addiction upgraded to level {greenWaveAddictionLevel}");
-                break;
-            case SkillType.OopsieRecoverySystem:
-                OopsieRecoverySystemLevel++;
-                Debug.Log($"Oopsie Recovery System upgraded to level {OopsieRecoverySystemLevel}");
-                break;
-        }
-    }
-
-    public bool CanUpgrade(SkillType type){
-        int currentLevel = GetSkillLevel(type);
-        return currentLevel < maxLevel;
     }
     
     public int GetSkillLevel(SkillType type){
         switch(type){
             case SkillType.SleepyMode: return sleepyModeLevel;
             case SkillType.GreenWaveAddiction: return greenWaveAddictionLevel;
-            case SkillType.OopsieRecoverySystem: return OopsieRecoverySystemLevel;
-            default: return 0;
+            case SkillType.OopsieRecoverySystem: return oopsieRecoverySystemLevel;
+            default: return 1;
         }
     }
     
     public int GetUpgradeCost(SkillType type){
         int currentLevel = GetSkillLevel(type);
-        return CalculateUpgradeCost(currentLevel);
+        if(currentLevel >= maxLevel) return int.MaxValue;
+        
+        float multiplier = 1f;
+        switch(type){
+            case SkillType.SleepyMode: multiplier = 0.7f; break;
+            case SkillType.GreenWaveAddiction: multiplier = 1.4f; break;
+            case SkillType.OopsieRecoverySystem: multiplier = 1.0f; break;
+        }
+        
+        return Mathf.RoundToInt(baseCost * Mathf.Pow(costMultiplier, currentLevel - 1) * multiplier);
     }
     
-    int CalculateUpgradeCost(int currentLevel) => Mathf.RoundToInt(baseUpgradeCost * Mathf.Pow(currentLevel, costPower));
-    public bool CanAffordUpgrade(SkillType type, int playerMoney) => playerMoney >= GetUpgradeCost(type) && CanUpgrade(type);
-    
-    public int GetNextLevelCost(SkillType type){
-        int nextLevel = GetSkillLevel(type) + 1;
-        if(nextLevel > maxLevel) return 0;
-        return CalculateUpgradeCost(nextLevel);
+    public bool CanAffordUpgrade(SkillType type, int playerMoney) => playerMoney >= GetUpgradeCost(type);
+    public void AddLevel(SkillType type){
+        switch(type){
+            case SkillType.SleepyMode:
+                if(sleepyModeLevel < maxLevel) sleepyModeLevel++;
+                break;
+            case SkillType.GreenWaveAddiction:
+                if(greenWaveAddictionLevel < maxLevel) greenWaveAddictionLevel++;
+                break;
+            case SkillType.OopsieRecoverySystem:
+                if(oopsieRecoverySystemLevel < maxLevel) oopsieRecoverySystemLevel++;
+                break;
+        }
     }
 }

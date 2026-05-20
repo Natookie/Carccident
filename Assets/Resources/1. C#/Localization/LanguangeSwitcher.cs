@@ -4,10 +4,15 @@ using UnityEngine.Localization.Settings;
 
 public class LanguageSwitcher : MonoBehaviour
 {
-    void Update(){
-        //if(Input.GetKeyDown(KeyCode.Alpha1)) SetLanguage("en");
-        //if(Input.GetKeyDown(KeyCode.Alpha2)) SetLanguage("id");
-        //if(Input.GetKeyDown(KeyCode.Alpha3)) SetLanguage("ru");
+    public static LanguageSwitcher Instance {get; private set;}
+
+    void Awake(){
+        if(Instance != null && Instance != this){
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
     }
 
     public void SetLanguage(string localeCode){

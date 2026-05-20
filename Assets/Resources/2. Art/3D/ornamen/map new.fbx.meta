@@ -3,7 +3,27 @@ guid: 7a380b5f026edae499f02b6629f0dadd
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.027
+    second: {fileID: 2100000, guid: 450de14f0b23c2d4794ef2c701c58ddf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: jalanan
+    second: {fileID: 2100000, guid: 219f3d66ec503194a9ecdac610f4770a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: rumput
+    second: {fileID: 2100000, guid: 976d52ec2168afe4198fcfd601dc89e8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: strip jalans
+    second: {fileID: 2100000, guid: 7528682a47b81e643836d576d28336ee, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

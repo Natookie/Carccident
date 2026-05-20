@@ -2,13 +2,14 @@ using UnityEngine;
 using Nova;
 using System.Collections;
 using System.Collections.Generic;
+using NaughtyAttributes;
 
 public class TrafficUI : MonoBehaviour
 {
     public static TrafficUI Instance {get; private set;}
 
     [Header("REFERENCES")]
-    [SerializeField] private UIBlock2D panel;
+    public UIBlock2D panel;
     [SerializeField] private TextBlock trafficDirection;
     [SerializeField] private DestinationText[] destinationTexts;
     [SerializeField] private Sprite[] trafficSprite = new Sprite[3];
@@ -56,6 +57,7 @@ public class TrafficUI : MonoBehaviour
         
         foreach(UIBlock2D block in straightIndicators) block.AddGestureHandler<Gesture.OnPress>(OnStraightButtonPressed);
         foreach(UIBlock2D block in rightIndicators) block.AddGestureHandler<Gesture.OnPress>(OnRightButtonPressed);
+        panel.AddGestureHandler<Gesture.OnPress>(OnPanelPressed);
     }
 
     void InitializeDestinationMap(){
@@ -81,6 +83,8 @@ public class TrafficUI : MonoBehaviour
     void Start(){
         HidePrompt();
     }
+
+    void OnPanelPressed(Gesture.OnPress evt) => shouldBeActive = true;
 
     void Update(){
         if(!panel.gameObject.activeSelf) return;

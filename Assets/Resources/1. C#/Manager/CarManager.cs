@@ -8,7 +8,9 @@ public class CarManager : MonoBehaviour
     public static CarManager Instance {get; private set;}
     
     [Header("CAR SETTINGS")]
-    [SerializeField] private GameObject[] carPrefabs;
+    [SerializeField] private GameObject[] normalCarPrefabs;
+    [SerializeField] private GameObject[] emergencyCarPrefabs;
+    [SerializeField] [Range(0f, 100f)] private float emergencySpawnChance = 10f;
     [SerializeField] private Transform carParent;
     
     [Header("SPAWN SETTINGS")]
@@ -22,8 +24,8 @@ public class CarManager : MonoBehaviour
     [ReadOnly] public Transform[] spawnPoints;
     
     [Header("DEBUG SPAWN")]
+    [SerializeField] private bool dontSpawnAnyCar = false;
     [SerializeField] private bool showDebug = true;
-    [ShowIf("showDebug")][SerializeField] private bool showDebugGUI = true;
     [Space(5)]
     [ShowIf("showDebug"), ReadOnly] public Transform debugNorthRightTurn;
     [ShowIf("showDebug"), ReadOnly] public Transform debugNorthStraight;
@@ -40,6 +42,7 @@ public class CarManager : MonoBehaviour
     [Header("DIFFICULTY SCALING")]
     [SerializeField] private AnimationCurve spawnRateCurve;
     [SerializeField] private AnimationCurve maxCarsCurve;
+    [SerializeField] private AnimationCurve emergencySpawnCurve;
     
     private RoadSpawnerManager roadSpawnerManager;
     private List<CarLogic> activeCars = new List<CarLogic>();
@@ -68,14 +71,29 @@ public class CarManager : MonoBehaviour
         Instance = this;
         
         roadSpawnerManager = FindFirstObjectByType<RoadSpawnerManager>();
+        if(normalCarPrefabs.Length == 0) Debug.LogError("No normal car prefabs assigned!");
     }
     
     void Start(){
-        for(int i = 0; i < 2; i++) CreateNewCarAndAddToPool();
+        for(int i = 0; i < 200; i++) CreateNewCarAndAddToPool();
         spawnTimer = GetCurrentSpawnInterval();
         cachedRoadY = (northSouthRoad.bounds.max.y + eastWestRoad.bounds.max.y) / 2f;
         
         if(showDebug) InitializeDebugSpawnPoints();
+    }
+
+    public void ClearAllCars(){
+        List<CarLogic> carsToDestroy = new List<CarLogic>(activeCars);
+        
+        foreach(CarLogic car in carsToDestroy){
+            if(car != null){
+                activeCars.Remove(car);
+                Destroy(car.gameObject);
+            }
+        }
+        
+        carPool.Clear();
+        for(int i = 0; i < 200; i++) CreateNewCarAndAddToPool();
     }
     
     [Button("Initialize Debug Spawn Points", EButtonEnableMode.Editor)]
@@ -98,7 +116,9 @@ public class CarManager : MonoBehaviour
     
     void Update(){
         if(showDebug) HandleDebugInput();
-        if(GameManager.Instance.isGameOver) return;
+
+        if(dontSpawnAnyCar) return;
+        if(!GameManager.Instance.isGameInitialized || GameManager.Instance.isGameOver) return;
 
         if(spawnTimer <= 0f){
             if(activeCars.Count < GetCurrentMaxCars()){
@@ -169,69 +189,7 @@ public class CarManager : MonoBehaviour
         
         if(spawnPoint != null) SpawnDebugCar(spawnPoint, intent);
     }
-    
-    void OnGUI(){
-        if(!showDebugGUI) return;
-        
-        if(selectedDebugIndex >= 0){
-            GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-            boxStyle.fontSize = 24;
-            boxStyle.alignment = TextAnchor.MiddleCenter;
-            
-            GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
-            labelStyle.fontSize = 20;
-            labelStyle.alignment = TextAnchor.MiddleCenter;
-            labelStyle.normal.textColor = Color.yellow;
-            
-            float boxWidth = 400;
-            float boxHeight = 150;
-            float x = (Screen.width / 2) - (boxWidth / 2);
-            float y = (Screen.height / 2) - (boxHeight / 2);
-            
-            GUI.Box(new Rect(x, y, boxWidth, boxHeight), "", boxStyle);
-            
-            string selectedText = debugOptions[selectedDebugIndex].Substring(3);
-            GUI.Label(new Rect(x, y + 30, boxWidth, 50), $"Selected: {selectedText}", labelStyle);
-            GUI.Label(new Rect(x, y + 90, boxWidth, 40), "Press ENTER to spawn | ESC to cancel", labelStyle);
-        }
-    }
-    
-    void SpawnRandomCar(){
-        if(carPool.Count == 0) CreateNewCarAndAddToPool();
-        
-        CarLogic newCar = carPool.Dequeue();
-        
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        int laneID = roadSpawnerManager != null ? roadSpawnerManager.GetLaneID(spawnPoint) : -1;
-        CarLogic.TurnIntent turnIntent = DetermineTurnIntent(spawnPoint);
-        
-        Transform turnTarget = null;
-        Transform stopArea = null;
-        
-        if(roadSpawnerManager != null){
-            if(turnIntent == CarLogic.TurnIntent.Right) turnTarget = roadSpawnerManager.GetTurnTarget(spawnPoint);
-            stopArea = roadSpawnerManager.GetStopArea(spawnPoint);
-        }
-        
-        Vector3 spawnPos = GetSpawnPositionOnRoad(spawnPoint.position);
 
-        newCar.Initialize(nextCarID++, laneID, spawnPos, turnIntent, turnTarget, stopArea);
-        newCar.transform.SetParent(carParent);
-        newCar.name = $"Car_{newCar.carID}";
-        
-        newCar.gameObject.SetActive(true);
-        activeCars.Add(newCar);
-    }
-    
-    CarLogic.TurnIntent DetermineTurnIntent(Transform spawnPoint){
-        if(roadSpawnerManager == null) return CarLogic.TurnIntent.Straight;
-        
-        var info = roadSpawnerManager.GetLaneInfo(spawnPoint);
-        if(info == null) return CarLogic.TurnIntent.Straight;
-        
-        return info.laneType == "RightTurn" ? CarLogic.TurnIntent.Right : CarLogic.TurnIntent.Straight;
-    }
-    
     void SpawnDebugCar(Transform spawnPoint, CarLogic.TurnIntent intent){
         if(carPool.Count == 0) CreateNewCarAndAddToPool();
         
@@ -253,14 +211,82 @@ public class CarManager : MonoBehaviour
         newCar.name = $"DebugCar_{newCar.carID}";
         activeCars.Add(newCar);
     }
+
+    void OnGUI(){
+        if(!showDebug || selectedDebugIndex < 0) return;
+        
+        var boxStyle = new GUIStyle(GUI.skin.box){
+            fontSize = 24,
+            alignment = TextAnchor.MiddleCenter
+        };
+        
+        var labelStyle = new GUIStyle(GUI.skin.label){
+            fontSize = 20,
+            alignment = TextAnchor.MiddleCenter,
+            normal = { textColor = Color.yellow }
+        };
+        
+        float boxWidth = 400;
+        float boxHeight = 150;
+        float x = (Screen.width - boxWidth) / 2;
+        float y = (Screen.height - boxHeight) / 2;
+        
+        GUI.Box(new Rect(x, y, boxWidth, boxHeight), "", boxStyle);
+        
+        string selectedText = debugOptions[selectedDebugIndex].Substring(3);
+        GUI.Label(new Rect(x, y + 30, boxWidth, 50), $"Selected: {selectedText}", labelStyle);
+        GUI.Label(new Rect(x, y + 90, boxWidth, 40), "Press ENTER to spawn | ESC to cancel", labelStyle);
+    }
+    
+    void SpawnRandomCar(){
+        if(carPool.Count == 0) CreateNewCarAndAddToPool();
+        
+        CarLogic newCar = carPool.Dequeue();
+        
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        int laneID = roadSpawnerManager != null ? roadSpawnerManager.GetLaneID(spawnPoint) : -1;
+        CarLogic.TurnIntent turnIntent = DetermineTurnIntent(spawnPoint);
+        
+        Transform turnTarget = null;
+        Transform stopArea = null;
+        
+        if(roadSpawnerManager != null){
+            if(turnIntent == CarLogic.TurnIntent.Right) turnTarget = roadSpawnerManager.GetTurnTarget(spawnPoint);
+            stopArea = roadSpawnerManager.GetStopArea(spawnPoint);
+        }
+        
+        Vector3 spawnPos = GetSpawnPositionOnRoad(spawnPoint.position);
+        
+        newCar.Initialize(nextCarID++, laneID, spawnPos, turnIntent, turnTarget, stopArea);
+        newCar.transform.SetParent(carParent);
+        newCar.name = $"Car_{newCar.carID}";
+        
+        newCar.gameObject.SetActive(true);
+        activeCars.Add(newCar);
+    }
+    
+    bool IsEmergencyVehicle(){
+        float currentChance = GetCurrentEmergencyChance();
+        return Random.Range(0f, 100f) < currentChance;
+    }
+    
+    CarLogic.TurnIntent DetermineTurnIntent(Transform spawnPoint){
+        if(roadSpawnerManager == null) return CarLogic.TurnIntent.Straight;
+        
+        var info = roadSpawnerManager.GetLaneInfo(spawnPoint);
+        if(info == null) return CarLogic.TurnIntent.Straight;
+        
+        return info.laneType == "RightTurn" ? CarLogic.TurnIntent.Right : CarLogic.TurnIntent.Straight;
+    }
     
     void CreateNewCarAndAddToPool(){
-        if(carPrefabs.Length == 0){
-            Debug.LogError("No car prefabs assigned!");
+        GameObject carPrefab = GetRandomCarPrefab();
+        
+        if(carPrefab == null){
+            Debug.LogError("No car prefabs available!");
             return;
         }
         
-        GameObject carPrefab = carPrefabs[Random.Range(0, carPrefabs.Length)];
         GameObject newCarObj = Instantiate(carPrefab);
         CarLogic newCar = newCarObj.GetComponent<CarLogic>();
         
@@ -272,6 +298,16 @@ public class CarManager : MonoBehaviour
         
         newCarObj.SetActive(false);
         carPool.Enqueue(newCar);
+    }
+    
+    GameObject GetRandomCarPrefab(){
+        bool spawnEmergency = IsEmergencyVehicle();
+        
+        if(spawnEmergency && emergencyCarPrefabs.Length > 0) 
+            return emergencyCarPrefabs[Random.Range(0, emergencyCarPrefabs.Length)];
+        else if(normalCarPrefabs.Length > 0) 
+            return normalCarPrefabs[Random.Range(0, normalCarPrefabs.Length)];
+        return null;
     }
     
     public void ReturnCarToPool(CarLogic car){
@@ -297,6 +333,15 @@ public class CarManager : MonoBehaviour
             return Mathf.CeilToInt(maxActiveCars * multiplier);
         }
         return maxActiveCars;
+    }
+    
+    float GetCurrentEmergencyChance(){
+        if(GameManager.Instance != null && emergencySpawnCurve != null && emergencySpawnCurve.keys.Length > 0){
+            float gameTime = GameManager.Instance.GetCurrentShiftTime();
+            float multiplier = emergencySpawnCurve.Evaluate(gameTime);
+            return Mathf.Clamp(emergencySpawnChance * multiplier, 0f, 100f);
+        }
+        return emergencySpawnChance;
     }
     
     Vector3 GetSpawnPositionOnRoad(Vector3 originalPosition) => new Vector3(originalPosition.x, cachedRoadY + spawnHeightOffset, originalPosition.z);

@@ -6,13 +6,11 @@ public class TrafficLightManager : MonoBehaviour
 {
     public static TrafficLightManager Instance { get; private set; }
 
-    [Header("MATERIALS")]
-    public Material redMaterial;
-    public Material greenMaterial;
-    public Material yellowMaterial;
+    [SerializeField] private bool testAllLanesGreen = false;
 
-    [Header("TIMING")]
-    public float yellowLightDuration = 0.3f;
+    [Foldout("MATERIALS")] public Material redMaterial;
+    [Foldout("MATERIALS")] public Material greenMaterial;
+    [Foldout("MATERIALS")] public Material yellowMaterial;
 
     [Header("TRAFFIC LIGHTS")]
     [SerializeField] private TrafficLight northLight;
@@ -32,8 +30,6 @@ public class TrafficLightManager : MonoBehaviour
     [SerializeField] private LaneStatus south = new LaneStatus();
     [SerializeField] private LaneStatus east = new LaneStatus();
     [SerializeField] private LaneStatus west = new LaneStatus();
-
-    [SerializeField] private bool testAllLanesGreen = false;
     
     public enum ClickType
     {
@@ -43,6 +39,7 @@ public class TrafficLightManager : MonoBehaviour
     }
 
     private bool isProcessing = false;
+    const float YELLOW_DURATION = 0.3f;
 
     void Awake(){
         if(Instance != null && Instance != this){
@@ -102,11 +99,11 @@ public class TrafficLightManager : MonoBehaviour
         if(targetLight != null){
             if(clickType == ClickType.Straight && previousStraight != currentLane.straightActive){
                 targetLight.SetStraightYellow();
-                yield return new WaitForSeconds(yellowLightDuration);
+                yield return new WaitForSeconds(YELLOW_DURATION);
             }
             else if(clickType == ClickType.Right && previousRight != currentLane.rightActive){
                 targetLight.SetRightYellow();
-                yield return new WaitForSeconds(yellowLightDuration);
+                yield return new WaitForSeconds(YELLOW_DURATION);
             }
         }
         

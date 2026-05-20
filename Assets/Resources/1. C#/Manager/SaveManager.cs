@@ -12,6 +12,10 @@ public static class SaveManager
     private const string TotalCarsPassedKey = "TotalCarsPassed";
     private const string TotalCollisionsKey = "TotalCollisions";
 
+    private const string VolumeKey = "Volume";
+    private const string GraphicKey = "Graphic";
+    private const string Language = "Language";
+
     #region MONEY
     public static int GetMoney(){
         return PlayerPrefs.GetInt(MoneyKey, 0);
@@ -112,6 +116,35 @@ public static class SaveManager
     public static void AddTotalCollisions(int amount){
         int currentTotal = GetTotalCollisions();
         SetTotalCollisions(currentTotal + amount);
+    }
+    #endregion
+
+    #region SETTINGS
+    public static float GetVolume(){
+        return PlayerPrefs.GetFloat(VolumeKey, 1f);
+    }
+
+    public static void SetVolume(float volume){
+        PlayerPrefs.SetFloat(VolumeKey, Mathf.Clamp01(volume));
+        PlayerPrefs.Save();
+    }
+
+    public static int GetGraphic(){
+        return PlayerPrefs.GetInt(GraphicKey, 0);
+    }
+
+    public static void SetGraphic(int graphicIndex){
+        PlayerPrefs.SetInt(GraphicKey, graphicIndex);
+        PlayerPrefs.Save();
+    }
+
+    public static string GetLanguage(){
+        return PlayerPrefs.GetString(Language, "English");
+    }
+
+    public static void SetLanguage(string language){
+        PlayerPrefs.SetString(Language, language);
+        PlayerPrefs.Save();
     }
     #endregion
 

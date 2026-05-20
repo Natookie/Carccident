@@ -58,6 +58,7 @@ Assets/
    CarConfiguration.cs
    CarLogic.cs
    CarRunTimeStats.cs
+   CarSirene.cs
   GameFlow/TrafficLight.cs
   Localization/LanguangeSwitcher.cs
   Manager/
@@ -79,6 +80,7 @@ Assets/
    BatteryUI.cs
    HUDUI.cs
    MainMenuButtonUI.cs
+   PauseUI.cs
    ScoreUI.cs
    SettingUI.cs
    TrafficUI.cs
@@ -445,7 +447,6 @@ Temp/bin/Debug/
  NaughtyAttributes.Core.dll
  NaughtyAttributes.Editor.dll
  NaughtyAttributes.Test.dll
- Nova.Compat.dll
  Nova.dll
  Nova.Editor.dll
  Nova.UIControls.dll

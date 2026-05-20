@@ -380,9 +380,7 @@ Library/ScriptAssemblies/
  Unity.TextMeshPro.dll
  UnityEditor.UI.dll
  UnityEngine.UI.dll
-Temp/bin/Debug/
- Nova.Compat.dll
- Nova.dll
+Temp/bin/Debug/Nova.dll
 
 [analyzerReferences]
 ../../Program Files/Unity/Hub/Editor/6000.2.6f2/Editor/Data/Tools/Unity.SourceGenerators/

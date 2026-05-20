@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767d09f2162b7c04485db54a5417cecc, type: 3}
+  m_Name: Pedes_Default
+  m_EditorClassIdentifier: Assembly-CSharp::PedestrianSettings
+  moveSpeed: 2
+  stopDistance: 0.1
+  rotationSpeed: 10
+  bobSpeed: 8
+  bobAmount: 0.05
+  wobbleAmount: 5
+  wobbleSpeed: 10
+  tiltAmount: 8
+  tiltSpeed: 12
+  checkRadius: 0.5
+  maxTryFindDestination: 50
+  castHeight: 0.5

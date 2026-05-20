@@ -10,5 +10,9 @@ TimeManager:
       m_Denominator: 1
       m_Numerator: 141120000
   Maximum Allowed Timestep: 0.33333334
+<<<<<<< Updated upstream
   m_TimeScale: 1
+=======
+  m_TimeScale: 2
+>>>>>>> Stashed changes
   Maximum Particle Timestep: 0.03

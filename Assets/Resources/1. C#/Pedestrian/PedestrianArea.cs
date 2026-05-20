@@ -4,7 +4,7 @@ public class PedestrianArea : MonoBehaviour
 {
     [SerializeField] private BoxCollider areaCollider;
 
-    void Awake(){
+    void Start(){
         if(areaCollider == null) areaCollider = GetComponent<BoxCollider>();
     }
 

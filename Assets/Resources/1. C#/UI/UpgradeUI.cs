@@ -15,8 +15,11 @@ public class UpgradeUI : MonoBehaviour
 
     bool needsUpdate => upgradePanel.activeSelf;
     int playerMoney = 0;
+    private int[] lastLevels;
 
     void Awake(){
+        lastLevels = new int[skillList.Length];
+        
         for(int i = 0; i < skillList.Length; i++){
             skillList[i].SetSkillIndex(i);
             skillList[i].Initialize(this, settings);
@@ -26,6 +29,7 @@ public class UpgradeUI : MonoBehaviour
     void Start(){
         RefreshMoney();
         LoadSkillLevels();
+        UpdateAllSkills();
     }
 
     void OnDestroy() => SaveSkillLevels();
@@ -39,20 +43,45 @@ public class UpgradeUI : MonoBehaviour
     void LoadSkillLevels(){
         skillManager.sleepyModeLevel = SaveManager.GetSleepyModeLevel();
         skillManager.greenWaveAddictionLevel = SaveManager.GetGreenWaveLevel();
-        skillManager.OopsieRecoverySystemLevel = SaveManager.GetOopsieRecoveryLevel();
+        skillManager.oopsieRecoverySystemLevel = SaveManager.GetOopsieRecoveryLevel();
     }
 
     void SaveSkillLevels(){
         SaveManager.SetSleepyModeLevel(skillManager.sleepyModeLevel);
         SaveManager.SetGreenWaveLevel(skillManager.greenWaveAddictionLevel);
-        SaveManager.SetOopsieRecoveryLevel(skillManager.OopsieRecoverySystemLevel);
+        SaveManager.SetOopsieRecoveryLevel(skillManager.oopsieRecoverySystemLevel);
     }
 
     void Update(){
         if(!needsUpdate) return;
-
-        foreach(SkillButton skill in skillList){
-            skill.UpdateUpgradeableStatus(skillManager, playerMoney);
+        
+        bool moneyChanged = playerMoney != SaveManager.GetMoney();
+        bool levelsChanged = false;
+        
+        for(int i = 0; i < skillList.Length; i++){
+            int currentLevel = GetSkillLevel(i);
+            if(currentLevel != lastLevels[i]){
+                levelsChanged = true;
+                lastLevels[i] = currentLevel;
+            }
+        }
+        
+        if(moneyChanged) RefreshMoney();
+        if(moneyChanged || levelsChanged) UpdateAllSkills();
+    }
+    
+    int GetSkillLevel(int index){
+        switch(index){
+            case 0: return skillManager.sleepyModeLevel;
+            case 1: return skillManager.greenWaveAddictionLevel;
+            case 2: return skillManager.oopsieRecoverySystemLevel;
+            default: return 1;
+        }
+    }
+    
+    void UpdateAllSkills(){
+        for(int i = 0; i < skillList.Length; i++){
+            skillList[i].UpdateUpgradeableStatus(skillManager, playerMoney);
         }
     }
 
@@ -60,6 +89,7 @@ public class UpgradeUI : MonoBehaviour
         if(!skillList[skillIndex].IsUpgradeable) return;
         
         skillList[skillIndex].PlayClickAnimation();
+        AudioManager.Instance.PlayUpgrade();
         StartCoroutine(DelayedUpgrade(skillIndex));
     }
     
@@ -91,12 +121,13 @@ public class UpgradeUI : MonoBehaviour
                 cost = skillManager.GetUpgradeCost(skillType);
                 if(SaveManager.SpendMoney(cost)){
                     skillManager.AddLevel(skillType);
-                    SaveManager.SetOopsieRecoveryLevel(skillManager.OopsieRecoverySystemLevel);
+                    SaveManager.SetOopsieRecoveryLevel(skillManager.oopsieRecoverySystemLevel);
                 }
                 break;
         }
         
         RefreshMoney();
+        UpdateAllSkills();
         skillList[skillIndex].ResetSizeIfNotUpgradeable();
     }
 }

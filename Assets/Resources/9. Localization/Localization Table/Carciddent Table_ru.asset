@@ -18,12 +18,40 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 79255687168
-    m_Localized: Russian
+  - m_Id: 1873573893042178
+    m_Localized: 
     m_Metadata:
       m_Items: []
-  - m_Id: 158876160000
-    m_Localized: Y
+  - m_Id: 1873573893042179
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042180
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042181
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042182
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042183
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042184
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042185
+    m_Localized: 
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042186
+    m_Localized: 
     m_Metadata:
       m_Items: []
   references:

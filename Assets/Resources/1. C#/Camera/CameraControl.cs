@@ -31,6 +31,15 @@ public class CameraControl : MonoBehaviour
     [Header("INPUT")]
     [SerializeField] private string zoomAxis = "Mouse ScrollWheel";
 
+    [Header("CAMERA SHAKE")]
+    [SerializeField] private float shakeIntensity = 0.5f;
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeDecay = 0.95f;
+
+    private float currentShakeIntensity = 0f;
+    private float currentShakeDuration = 0f;
+    private Quaternion originalLocalRotation;
+
     [Header("REFERENCES")]
     [SerializeField] private Camera thisCam;
     
@@ -67,6 +76,8 @@ public class CameraControl : MonoBehaviour
             originalFocusDistance = dof.focusDistance.value;
             dof.focusDistance.value = originalFocusDistance;
         }
+
+        originalLocalRotation = transform.localRotation;
     }
     
     void Update(){
@@ -76,7 +87,24 @@ public class CameraControl : MonoBehaviour
             ApplyRotation();
         }
     }
-    
+
+    void LateUpdate(){
+        if(!GameManager.Instance.isGameInitialized) return;
+        
+        if(currentShakeDuration > 0f){
+            currentShakeDuration -= Time.deltaTime;
+            
+            Vector3 shakeRotation = new Vector3(
+                Random.Range(-1f, 1f) * currentShakeIntensity,
+                Random.Range(-1f, 1f) * currentShakeIntensity,
+                Random.Range(-1f, 1f) * currentShakeIntensity * 0.5f
+            );
+            
+            transform.localRotation = originalLocalRotation * Quaternion.Euler(shakeRotation);
+            currentShakeIntensity *= shakeDecay;
+        }
+    }
+
     void HandleInput(){
         float targetSpeedX = 0f;
         float targetSpeedY = 0f;
@@ -131,6 +159,8 @@ public class CameraControl : MonoBehaviour
             originalRotation.y + currentY,
             originalRotation.z
         );
+        
+        originalLocalRotation = transform.localRotation;
     }
     
     void HandleZoom(){
@@ -198,5 +228,20 @@ public class CameraControl : MonoBehaviour
         transform.eulerAngles = originalRotation;
         
         if(hasDOF) dof.focusDistance.value = originalFocusDistance;
+    }
+
+    public void ShakeCamera(){
+        ShakeCamera(shakeIntensity, shakeDuration);
+    }
+
+    public void ShakeCamera(float intensity, float duration){
+        currentShakeIntensity = intensity;
+        currentShakeDuration = duration;
+    }
+
+    public void StopShake(){
+        currentShakeDuration = 0f;
+        currentShakeIntensity = 0f;
+        transform.localRotation = originalLocalRotation;
     }
 }

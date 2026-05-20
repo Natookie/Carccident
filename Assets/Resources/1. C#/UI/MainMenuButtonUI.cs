@@ -36,6 +36,8 @@ public class MainButtonUI : MonoBehaviour
         currentSelectedButton = button;
         currentSelectedButton.SetSelected(true);
     }
+
+    public void ResetMainButton() => playButton.ResetButton();
     
     public void OpenUpgradePanel(){
         CloseAllPanels();
@@ -646,6 +648,9 @@ public class PlayButton
     public void ResetButton(){
         isClicked = false;
         isHovering = false;
+        
+        if(pulseCoroutine != null && owner != null) owner.StopCoroutine(pulseCoroutine);
+        if(hoverCoroutine != null && owner != null) owner.StopCoroutine(hoverCoroutine);
         
         if(mainBlock != null){
             mainBlock.transform.localScale = originalMainBlockScale;

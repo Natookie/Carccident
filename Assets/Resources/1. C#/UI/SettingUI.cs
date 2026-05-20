@@ -45,6 +45,8 @@ public class SettingUI : MonoBehaviour
     [SerializeField] private Color sliderHoverColor = new Color(0.9f, 0.9f, 0.9f, 1f);
     
     void Awake(){
+        LoadSavedSettings();
+        
         if(volumeInnerPart != null){
             originalVolumeInnerScale = volumeInnerPart.transform.localScale;
             originalVolumeInnerColor = volumeInnerPart.Color;
@@ -79,6 +81,37 @@ public class SettingUI : MonoBehaviour
         }
     }
 
+    #region SAVE/LOAD
+    void LoadSavedSettings(){
+        //Volume
+        float savedVolume = SaveManager.GetVolume();
+        volumePercent = savedVolume * 100f;
+        
+        //Graphic
+        int savedGraphic = SaveManager.GetGraphic();
+        resolutionStep = Mathf.Clamp(savedGraphic, 0, resolutionValues.Length - 1);
+        ApplyResolutionScale();
+        
+        //Language
+        string savedLanguage = SaveManager.GetLanguage();
+        for(int i = 0; i < languages.Length; i++){
+            if(languages[i] == savedLanguage){
+                currentLanguageIndex = i;
+                break;
+            }
+        }
+        ApplyLanguage();
+    }
+    
+    void SaveVolumeSetting(){
+        float volume = volumePercent / 100f;
+        SaveManager.SetVolume(volume);
+    }
+    
+    void SaveResolutionSetting() => SaveManager.SetGraphic(resolutionStep);
+    void SaveLanguageSetting() => SaveManager.SetLanguage(languages[currentLanguageIndex]);
+    #endregion
+
     #region VOLUME
     void OnVolumeDrag(Gesture.OnDrag evt){
         if(volumeSliderLine == null || volumeInnerPart == null) return;
@@ -93,6 +126,8 @@ public class SettingUI : MonoBehaviour
         
         percent = Mathf.Clamp01(percent);
         volumePercent = percent * 100f;
+        
+        SaveVolumeSetting();
         
         if(isVolumeBeyondBounds && !wasBeyondBounds){
             if(volumeSquishCoroutine != null) StopCoroutine(volumeSquishCoroutine);
@@ -109,6 +144,8 @@ public class SettingUI : MonoBehaviour
     void OnVolumeRelease(Gesture.OnRelease evt){
         isVolumeDragging = false;
         isVolumeBeyondBounds = false;
+        
+        SaveVolumeSetting();
         
         if(volumeSquishCoroutine != null) StopCoroutine(volumeSquishCoroutine);
         volumeSquishCoroutine = StartCoroutine(SquishGradually(volumeInnerPart, originalVolumeInnerScale, false));
@@ -158,6 +195,7 @@ public class SettingUI : MonoBehaviour
         if(newStep != resolutionStep){
             resolutionStep = newStep;
             ApplyResolutionScale();
+            SaveResolutionSetting();
         }
         
         if(isResolutionBeyondBounds && !wasBeyondBounds){
@@ -175,6 +213,8 @@ public class SettingUI : MonoBehaviour
     void OnResolutionRelease(Gesture.OnRelease evt){
         isResolutionDragging = false;
         isResolutionBeyondBounds = false;
+        
+        SaveResolutionSetting();
         
         if(resolutionSquishCoroutine != null) StopCoroutine(resolutionSquishCoroutine);
         resolutionSquishCoroutine = StartCoroutine(SquishGradually(resolutionInnerPart, originalResolutionInnerScale, false));
@@ -213,10 +253,7 @@ public class SettingUI : MonoBehaviour
         float scale = resolutionValues[resolutionStep];
         var renderPipeline = GraphicsSettings.defaultRenderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset;
         
-        if(renderPipeline != null){
-            renderPipeline.renderScale = scale;
-            Debug.Log($"Resolution scale set to: {resolutionNames[resolutionStep]} ({scale * 100}%)");
-        }
+        if(renderPipeline != null) renderPipeline.renderScale = scale;
     }
     #endregion
     
@@ -225,6 +262,8 @@ public class SettingUI : MonoBehaviour
         StartCoroutine(PopAnimation(languageButton));
         currentLanguageIndex = (currentLanguageIndex + 1) % languages.Length;
         UpdateLanguageText();
+        SaveLanguageSetting();
+        ApplyLanguage();
     }
     
     void OnButtonHover(Gesture.OnHover evt){
@@ -237,6 +276,13 @@ public class SettingUI : MonoBehaviour
     
     void UpdateLanguageText(){
         if(languageText != null) languageText.Text = languages[currentLanguageIndex];
+    }
+    
+    void ApplyLanguage(){
+        switch (currentLanguageIndex){
+            case 0: LanguageSwitcher.Instance.SetLanguage("en"); break;
+            case 1: LanguageSwitcher.Instance.SetLanguage("id"); break;
+        }
     }
     #endregion
     

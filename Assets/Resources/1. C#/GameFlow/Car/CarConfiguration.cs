@@ -34,10 +34,6 @@ public class CarConfiguration : ScriptableObject
     public float mediumZoneDistance = 12f;
     public float closeZoneDistance = 6f;
 
-    [Header("COLLISION")]
-    public float knockUpForce = 12f;
-    public float knockBackForce = 15f;
-
     [Header("PATIENT SETTINGS")]
     public float patienceThreshold = 8f;
 }

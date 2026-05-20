@@ -23,32 +23,33 @@ public class RoadSpawnerManager : MonoBehaviour
     [SerializeField] private float rightTurnOffset = 1.0f;
     [SerializeField] private float straightOffset = 0.5f;
     
+    [Header("DEBUG")]
+    [SerializeField] private bool showGizmos = true;    
+    [SerializeField] private bool showTransform = true;    
+
     [Header("TURN POINTS")]
-    [ReadOnly] public Transform northTurnPoint;
-    [ReadOnly] public Transform southTurnPoint;
-    [ReadOnly] public Transform eastTurnPoint;
-    [ReadOnly] public Transform westTurnPoint;
+    [ShowIf("showTransform"), ReadOnly] public Transform northTurnPoint;
+    [ShowIf("showTransform"), ReadOnly] public Transform southTurnPoint;
+    [ShowIf("showTransform"), ReadOnly] public Transform eastTurnPoint;
+    [ShowIf("showTransform"), ReadOnly] public Transform westTurnPoint;
     
     [Header("STOP AREAS")]
-    [ReadOnly] public Transform northStopArea;
-    [ReadOnly] public Transform southStopArea;
-    [ReadOnly] public Transform eastStopArea;
-    [ReadOnly] public Transform westStopArea;
+    [ShowIf("showTransform"), ReadOnly] public Transform northStopArea;
+    [ShowIf("showTransform"), ReadOnly] public Transform southStopArea;
+    [ShowIf("showTransform"), ReadOnly] public Transform eastStopArea;
+    [ShowIf("showTransform"), ReadOnly] public Transform westStopArea;
     
     [Header("SPAWNERS")]
-    [ReadOnly] public Transform northRightTurn;
-    [ReadOnly] public Transform northStraight;
-    [ReadOnly] public Transform southRightTurn;
-    [ReadOnly] public Transform southStraight;
+    [ShowIf("showTransform"), ReadOnly] public Transform northRightTurn;
+    [ShowIf("showTransform"), ReadOnly] public Transform northStraight;
+    [ShowIf("showTransform"), ReadOnly] public Transform southRightTurn;
+    [ShowIf("showTransform"), ReadOnly] public Transform southStraight;
     [Space(10)]
-    [ReadOnly] public Transform eastRightTurn;
-    [ReadOnly] public Transform eastStraight;
-    [ReadOnly] public Transform westRightTurn;
-    [ReadOnly] public Transform westStraight;
+    [ShowIf("showTransform"), ReadOnly] public Transform eastRightTurn;
+    [ShowIf("showTransform"), ReadOnly] public Transform eastStraight;
+    [ShowIf("showTransform"), ReadOnly] public Transform westRightTurn;
+    [ShowIf("showTransform"), ReadOnly] public Transform westStraight;
 
-    [Header("GIZMOS")]
-    [SerializeField] private bool showGizmos = true;    
-    [Space(5)]
     [ShowIf("showGizmos")] public bool showRoadBounds = true;
     [ShowIf("showGizmos")] public bool showLaneDividers = true;
     [ShowIf("showGizmos")] public bool showSpawnPoints = true;

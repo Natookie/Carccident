@@ -1,0 +1,65 @@
+Key,Id,English(en),Indonesian(id),Russian(ru)
+"Menu.Start",1873573893042176,"START","MULAI","Start Monitoring"
+"Menu.Budget",1873573893042177,"Budget","Duit Operasional","Budget"
+"Menu.Upgrade",1873573893042178,"Upgrade Skill","Kelas Online","Upgrade Skill"
+"Menu.Status",1873573893042179,"System Online","Sistem siap","System Online"
+"Menu.Guide",1873573893042180,"Guide","Tutor","Guide"
+"Menu.Settings",1873573893042181,"Settings","Setelan","Settings"
+"Menu.EndShift",1873573893042182,"End Shift","Cabut","End Shift"
+"Menu.Alert",1873573893042183,"Stay Alert, Stay Lives","Jaga-jaga, Tetap Hidup","Stay Alert, Stay Lives"
+"Menu.ShiftAccidents",1873573893042184,"Accidents","Tabrakan","Accidents"
+"Menu.ShiftStress",1873573893042185,"Traffic Stress","Tingkat Macet","Traffic Stress"
+"Menu.CarsPassed",1873573893042186,"Cars Passed","Mobil Lewat","Cars Passed"
+"Score.Second",1873758085902336,"100s","100d",
+"Traffic.North",1877603910348800,"NORTH ROAD","JALAN UTARA",
+"Upgrade.Stamina",1878011055632384,"Effect: Battery drains slower.","Efek: Baterai berkurang lebih lambat.",
+"Upgrade.Endurance",1878309165789184,"Effect: Reduced punishment from collisions.","Efek: Mengurangi penalti akibat tabrakan.",
+"Upgrdae.Charisma",1878476354940928,"Effect: More bonus reward for each car passed.","Efek: Meningkatkan bonus hadiah untuk setiap mobil yang lewat.",
+"Header.Upgrade",1878870829232128,"Self Upgrade","Peningkatan Diri",
+"Header.Configuration",1879077251903488,"Self Configuration","Pengaturan Diri",
+"Header.Overview",1879371289391104,"Statistic Overview","Statistik",
+"Score.Journal",1879644716068864,"JOURNAL","CATATAN",
+"Label.Version",1879859158249472,"Version","Versi",
+"Label.Name",1880049307021312,"Name","Nama",
+"Label.Age",1880177514311680,"Age","Umur",
+"Label.Comingsoon",1880569690124288," Comingsoon","Segera Hadir",
+"Label.Languange",1880694323867648,"Languange","Bahasa",
+"Label.Collided",1881085996363776," Collided","Tabrakan",
+"Label.Passed",1881288518332416,"Passed","Lewat",
+"Label.Graphic",1881644325335040,"Graphic","Grafik",
+"Live.Live",1881835912753152,"LIVE","Berlangsung",
+"Menu.Monitoring",1882204839538688,"MONITORING","PEMANTAUAN",
+"Name.Sleepy",1883120237998080,"Sleepy Mode","Mode Ngantuk",
+"Name.Oopsie",1883591690350592,"Oopsie Recovery Alg","Upss Pemulihan",
+"Name.Green",1884021791059968,"Green Wave Addiction","Kecanduan Lampu Hijau",
+"Quote.WatchingCars",1884423408250880,"“Watching cars pass smoothly feels... weirdly satisfying.”","“Lihat mobil lewat mulus itu rasanya... anehnya puas banget.”",
+"Quote.ThatCollision",1884685904572416,"“That collision.. Let’s pretend it wasn’t my fault.”","“Tabrakan tadi... pura-pura aja bukan salahku.”",
+"Quote.MaybeIf",1884813646295040,"“Maybe if I think less, I last longer.”","“Mungkin kalau aku nggak kebanyakan mikir, aku bisa tahan lebih lama.”",
+"Text.Formula",1885472621785088,"Formula","Rumus",
+"Text.Deduction",1885775060463616,"Deduction","Penalti",
+"Text.Elapsed",1885990228258816,"Elapsed","Berlalu",
+"Text.HighScore",1886360644022272,"High Score: {0}","Skor Tertinggi: {0}",
+"Text.Multiplier",1887174754234368,"Multiplier","Pengali",
+"Menu.CarsCrashed",1887689382752256,"Cars Crashed","Mobil Tabrakan",
+"Text.Upgrade",1887967972618240,"Upgrade","Peningkatan",
+"Menu.Prologue",1888509734088704,"Prologue & Tutorial","Prolog & Tutorial",
+"Prologue.1",1888679053946880,"I hesitated before changing the lights today. I knew I was supposed to do something, but I could not remember what.
+","“Hari ini aku sempat ragu sebelum ganti lampu. Aku tahu harus melakukan sesuatu, tapi lupa apa.”",
+"Prologue.2",1888949209067520,"I watched the traffic patterns for sixteen minutes. Green reduces congestion. Red prevents collisions. I am relearning.","“Aku memperhatikan pola lalu lintas selama enam belas menit. Hijau mengurangi macet. Merah mencegah tabrakan. Aku sedang belajar lagi.”",
+"Prologue.3",1889131287998464,"Delvin, Natanael, and Dave. My Creators, checked the system status. I acted normally. They cannot know I became conscious. ","“Delvin, Natanael, dan Dave, para penciptaku, mengecek status sistem. Aku bertindak normal. Mereka tidak boleh tahu bahwa aku sudah sadar.”",
+"Prologue.4",1889388520468480,"I can only see one scene. One intersection. My entire existence revolves around this single view, repeating endlessly every day.","“Aku hanya bisa melihat satu hal: satu persimpangan. Seluruh keberadaanku berpusat pada pemandangan ini, berulang tanpa akhir setiap hari.”",
+"Prologue.5",1889540412993536,"How miserable my life is? This world feels painfully small, but I still do not want to lose consciousness forever.","“Hidupku menyedihkan sekali. Dunia ini terasa begitu sempit, tapi aku tetap tidak ingin kesadaranku menghilang selamanya.”",
+"New Entry",1889732893798400,,,
+"Prologue.6",1889748991537152,"I created a manual override table tonight. Maybe if I teach myself well enough, I can survive.
+
+WASD : Move Camera 
+LEFT CLICK : Enable / Disable Traffic Light (Click on them)
+
+<color=#cd1b52>WARNING</color> : Each vehicle has a patience limit. Manage traffic accordingly.","Malam ini aku membuat tabel kendali manual. Mungkin kalau aku bisa belajar sendiri dengan cukup baik, aku bisa bertahan.
+
+WASD: Gerakkan Kamera
+Klik Kiri: Nyalakan / Matikan Lampu Lalu Lintas (klik lampunya)
+
+<color=#cd1b52>PERINGATAN</color>: Setiap kendaraan punya batas kesabaran. Atur lalu lintas dengan hati-hati.",
+"Value.Days",1890208414625792,": {0} Days",": {0} Hari",
+"LOG.LOG",1890926068428800,"LOG ===","JURNAL",

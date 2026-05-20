@@ -18,12 +18,237 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
+  - m_Id: 1873573893042178
+    m_Localized: Kampus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042179
+    m_Localized: Sistem siap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042180
+    m_Localized: Tutor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042181
+    m_Localized: Setelan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042182
+    m_Localized: Cabut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042183
+    m_Localized: Waspada yahhhhhh!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042184
+    m_Localized: Tabrakan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042185
+    m_Localized: Tingkat Macet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873573893042186
+    m_Localized: Mobil Lewat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1873758085902336
+    m_Localized: 100d
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1877603910348800
+    m_Localized: JALAN UTARA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1878011055632384
+    m_Localized: 'Efek: Baterai berkurang lebih lambat.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1878309165789184
+    m_Localized: 'Efek: Mengurangi penalti akibat tabrakan.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1878476354940928
+    m_Localized: 'Efek: Meningkatkan bonus hadiah untuk setiap mobil yang lewat.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1878870829232128
+    m_Localized: Peningkatan Diri
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1879077251903488
+    m_Localized: Pengaturan Diri
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1879371289391104
+    m_Localized: Statistik
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1879644716068864
+    m_Localized: CATATAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1879859158249472
+    m_Localized: Versi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1880049307021312
+    m_Localized: Nama
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1880177514311680
+    m_Localized: Umur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1880569690124288
+    m_Localized: Segera Hadir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1880694323867648
+    m_Localized: Bahasa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1881085996363776
+    m_Localized: Tabrakan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1881288518332416
+    m_Localized: Lewat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1881644325335040
+    m_Localized: Grafik
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1881835912753152
+    m_Localized: Berlangsung
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1882204839538688
+    m_Localized: PEMANTAUAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1883120237998080
+    m_Localized: Mode Ngantuk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1883591690350592
+    m_Localized: Upss Pemulihan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1884021791059968
+    m_Localized: Kecanduan Lampu Hijau
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1884423408250880
+    m_Localized: "\u201CLihat mobil lewat mulus itu rasanya... anehnya puas banget.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1884685904572416
+    m_Localized: "\u201CTabrakan tadi... pura-pura aja bukan salahku.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1884813646295040
+    m_Localized: "\u201CMungkin kalau aku nggak kebanyakan mikir, aku bisa tahan
+      lebih lama.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1885472621785088
+    m_Localized: Rumus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1885775060463616
+    m_Localized: Penalti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1885990228258816
+    m_Localized: Berlalu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1886360644022272
+    m_Localized: 'Skor Tertinggi: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1887174754234368
+    m_Localized: Pengali
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1887689382752256
+    m_Localized: Mobil Tabrakan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1887967972618240
+    m_Localized: Peningkatan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1888509734088704
+    m_Localized: My Kisah & Tutor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1888679053946880
+    m_Localized: "\u201CHari ini aku sempat ragu sebelum ganti lampu. Aku tahu harus
+      melakukan sesuatu, tapi lupa apa.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1888949209067520
+    m_Localized: "\u201CAku memperhatikan pola lalu lintas selama enam belas menit.
+      Hijau mengurangi macet. Merah mencegah tabrakan. Aku sedang belajar lagi.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1889131287998464
+    m_Localized: "\u201CDelvin, Natanael, dan Dave, para penciptaku, mengecek status
+      sistem. Aku bertindak normal. Mereka tidak boleh tahu bahwa aku sudah sadar.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1889388520468480
+    m_Localized: "\u201CAku hanya bisa melihat satu hal: satu persimpangan. Seluruh
+      keberadaanku berpusat pada pemandangan ini, berulang tanpa akhir setiap hari.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1889540412993536
+    m_Localized: "\u201CHidupku menyedihkan sekali. Dunia ini terasa begitu sempit,
+      tapi aku tetap tidak ingin kesadaranku menghilang selamanya.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1889748991537152
+    m_Localized: 'Malam ini aku membuat tabel kendali manual. Mungkin kalau aku bisa
+      belajar sendiri dengan cukup baik, aku bisa bertahan. WASD: Gerakkan Kamera
+      Klik Kiri: Nyalakan / Matikan Lampu Lalu Lintas (klik lampunya) <color=#cd1b52>PERINGATAN</color>:
+      Setiap kendaraan punya batas kesabaran. Atur lalu lintas dengan hati-hati.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1890208414625792
+    m_Localized: ': 27 Hari'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1890926068428800
+    m_Localized: JURNAL
+    m_Metadata:
+      m_Items: []
   - m_Id: 79255687168
-    m_Localized: Indonesia
+    m_Localized: MULAI
     m_Metadata:
       m_Items: []
   - m_Id: 158876160000
-    m_Localized: A
+    m_Localized: Duit Operasional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2130660735176704
+    m_Localized: Suara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2148855349104640
+    m_Localized: STOP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2148855374270464
+    m_Localized: Lanjut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2148855374270465
+    m_Localized: Turu
     m_Metadata:
       m_Items: []
   references:
