@@ -22,14 +22,6 @@ MonoBehaviour:
     m_Localized: Upgrade
     m_Metadata:
       m_Items: []
-  - m_Id: 1873573893042179
-    m_Localized: System Online
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1873573893042180
-    m_Localized: Guide
-    m_Metadata:
-      m_Items: []
   - m_Id: 1873573893042181
     m_Localized: Settings
     m_Metadata:
@@ -42,38 +34,6 @@ MonoBehaviour:
     m_Localized: Stay Alert, Stay Lives
     m_Metadata:
       m_Items: []
-  - m_Id: 1873573893042184
-    m_Localized: Accidents
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1873573893042185
-    m_Localized: Traffic Stress
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1873573893042186
-    m_Localized: Cars Passed
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1873758085902336
-    m_Localized: 100s
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1877603910348800
-    m_Localized: NORTH ROAD
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1878011055632384
-    m_Localized: 'Effect: Battery drains slower.'
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1878309165789184
-    m_Localized: 'Effect: Reduced punishment from collisions.'
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1878476354940928
-    m_Localized: 'Effect: More bonus reward for each car passed.'
-    m_Metadata:
-      m_Items: []
   - m_Id: 1878870829232128
     m_Localized: Self Upgrade
     m_Metadata:
@@ -82,104 +42,12 @@ MonoBehaviour:
     m_Localized: Self Configuration
     m_Metadata:
       m_Items: []
-  - m_Id: 1879371289391104
-    m_Localized: Statistic Overview
-    m_Metadata:
-      m_Items: []
   - m_Id: 1879644716068864
     m_Localized: JOURNAL
     m_Metadata:
       m_Items: []
-  - m_Id: 1879859158249472
-    m_Localized: Version
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1880049307021312
-    m_Localized: Name
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1880177514311680
-    m_Localized: Age
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1880569690124288
-    m_Localized: Comingsoon
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1880694323867648
-    m_Localized: Languange
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1881085996363776
-    m_Localized: Collided
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1881288518332416
-    m_Localized: Passed
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1881644325335040
-    m_Localized: Graphic
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1881835912753152
-    m_Localized: LIVE
-    m_Metadata:
-      m_Items: []
   - m_Id: 1882204839538688
     m_Localized: MONITORING
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1883120237998080
-    m_Localized: Sleepy Mode
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1883591690350592
-    m_Localized: Oopsie Recovery Alg
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1884021791059968
-    m_Localized: Green Wave Addiction
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1884423408250880
-    m_Localized: "\u201CWatching cars pass smoothly feels... weirdly satisfying.\u201D"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1884685904572416
-    m_Localized: "\u201CThat collision.. Let\u2019s pretend it wasn\u2019t my fault.\u201D"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1884813646295040
-    m_Localized: "\u201CMaybe if I think less, I last longer.\u201D"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1885472621785088
-    m_Localized: Formula
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1885775060463616
-    m_Localized: Deduction
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1885990228258816
-    m_Localized: Elapsed
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1886360644022272
-    m_Localized: 'High Score: {0}'
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1887174754234368
-    m_Localized: Multiplier
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1887689382752256
-    m_Localized: Cars Crashed
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1887967972618240
-    m_Localized: Upgrade
     m_Metadata:
       m_Items: []
   - m_Id: 1888509734088704
@@ -197,8 +65,8 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1889131287998464
-    m_Localized: Delvin, Natanael, and Dave. My Creators, checked the system status.
-      I acted normally. They cannot know I became conscious.
+    m_Localized: Delvin, Natanael, Erika, and Dave. My Creators, checked the system
+      status. I acted normally. They cannot know I became conscious.
     m_Metadata:
       m_Items: []
   - m_Id: 1889388520468480
@@ -213,29 +81,17 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1889748991537152
     m_Localized: 'I created a manual override table tonight. Maybe if I teach myself
-      well enough, I can survive. WASD : Move Camera LEFT CLICK : Enable / Disable
-      Traffic Light (Click on them) <color=#cd1b52>WARNING</color> : Each vehicle
-      has a patience limit. Manage traffic accordingly.'
+      well enough, I can survive. \n\nWASD : Move Camera \nLEFT CLICK : Enable /
+      Disable Traffic Light (Click on them) \n<color=#cd1b52>WARNING</color> : Each
+      vehicle has a patience limit. Manage traffic accordingly.'
     m_Metadata:
       m_Items: []
-  - m_Id: 1890208414625792
-    m_Localized: ': 27 Days'
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1890926068428800
-    m_Localized: LOG ===
+  - m_Id: 7290746428313600
+    m_Localized: Conjuction #4.14.4.5
     m_Metadata:
       m_Items: []
   - m_Id: 79255687168
     m_Localized: START
-    m_Metadata:
-      m_Items: []
-  - m_Id: 158876160000
-    m_Localized: Budget
-    m_Metadata:
-      m_Items: []
-  - m_Id: 2130660735176704
-    m_Localized: Volume
     m_Metadata:
       m_Items: []
   - m_Id: 2148855349104640
@@ -248,6 +104,110 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 2148855374270465
     m_Localized: End Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502448078848
+    m_Localized: Version
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187712
+    m_Localized: Name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187713
+    m_Localized: Age
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187714
+    m_Localized: ': 27 Days'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187715
+    m_Localized: Graphic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187716
+    m_Localized: Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187717
+    m_Localized: Languange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187718
+    m_Localized: Sleepy Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187719
+    m_Localized: Oopsie Recovery Alg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187720
+    m_Localized: Green Wave Addiction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187721
+    m_Localized: 'Effect: Battery drains slower.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187722
+    m_Localized: 'Effect: Reduced punishment from collisions.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187723
+    m_Localized: 'Effect: More bonus reward for each car passed.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187724
+    m_Localized: "\u201CWatching cars pass smoothly feels... weirdly satisfying.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187725
+    m_Localized: "\u201CThat collision.. Let\u2019s pretend it wasn\u2019t my fault.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187726
+    m_Localized: "\u201CMaybe if I think less, I last longer.\u201D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187727
+    m_Localized: Elapsed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187728
+    m_Localized: Cars Crashed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187729
+    m_Localized: Cars Passed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187730
+    m_Localized: Formula
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187731
+    m_Localized: Deduction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187732
+    m_Localized: Multiplier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187733
+    m_Localized: Bonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187734
+    m_Localized: LOG ===
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324281314856960
+    m_Localized: System Online
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7333644867850240
+    m_Localized: System Dying
     m_Metadata:
       m_Items: []
   references:

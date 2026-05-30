@@ -3,8 +3,6 @@ using Nova;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Video;
-using Unity.VisualScripting;
 
 public class ScoreUI : MonoBehaviour
 {
@@ -36,6 +34,7 @@ public class ScoreUI : MonoBehaviour
     [SerializeField] private float sequenceDelay = 0.1f;
     [SerializeField] private float shakeAmount = 5f;
     [SerializeField] private float shakeDuration = 0.1f;
+    [SerializeField] private float clockUpdateInterval = 1f;
 
     private Vector3 originalScorePanelScale;
     private Dictionary<UIBlock2D, Vector3> originalBlockScales = new Dictionary<UIBlock2D, Vector3>();
@@ -43,26 +42,56 @@ public class ScoreUI : MonoBehaviour
     private Dictionary<TextBlock, Vector3> originalTextPositions = new Dictionary<TextBlock, Vector3>();
     private Dictionary<TextBlock, Vector3> originalTextScales = new Dictionary<TextBlock, Vector3>();
     private Coroutine currentAnimation;
+    private Coroutine clockCoroutine;
     
     private Vector3 originalBaseScorePos;
     private Vector3 originalBaseScoreScale;
+
+    private float baseMoneyMultiplier = 0f;
+    ScoreCalculator.ScoreResult result;
     
     private GameManager gm;
 
     void Start(){
         gm = GameManager.Instance;
-
-        if(baseScoreText == null) Debug.LogError("Base score is missing!");
-        if(deductionScoreText == null) Debug.LogError("Deduction score is missing!");
-        if(bonusScoreText == null) Debug.LogError("Bonus score is missing!");
-        if(multiplierScoreText == null) Debug.LogError("Multiplier score is missing!");
-
+        ValidateReferences();
         CacheOriginalValues();
         DisableAllBlocks();
         EnableDisplay(false);
+        
+        StartClock();
     }
 
-    void Update() => DisplayNightTime();
+    void OnDestroy(){
+        if(clockCoroutine != null) StopCoroutine(clockCoroutine);
+        if(currentAnimation != null) StopCoroutine(currentAnimation);
+    }
+
+    void ValidateReferences(){
+        if(baseScoreText == null) Debug.LogError("[ScoreUI] Base score is missing!");
+        if(deductionScoreText == null) Debug.LogError("[ScoreUI] Deduction score is missing!");
+        if(bonusScoreText == null) Debug.LogError("[ScoreUI] Bonus score is missing!");
+        if(multiplierScoreText == null) Debug.LogError("[ScoreUI] Multiplier score is missing!");
+    }
+
+    void StartClock(){
+        if(clockCoroutine != null) StopCoroutine(clockCoroutine);
+        clockCoroutine = StartCoroutine(UpdateClockRoutine());
+    }
+
+    IEnumerator UpdateClockRoutine(){
+        while(true){
+            if(timeText != null) timeText.Text = GetFormattedDateTime();
+            yield return new WaitForSeconds(clockUpdateInterval);
+        }
+    }
+
+    string GetFormattedDateTime(){
+        DateTime now = DateTime.Now;
+        string formattedDate = now.ToString("dd-MM-yy");
+        string formattedTime = now.ToString("HH:mm:ss");
+        return $"({formattedDate}) {formattedTime}";
+    }
 
     void CacheOriginalValues(){
         if(scorePanel != null) originalScorePanelScale = scorePanel.transform.localScale;
@@ -119,42 +148,15 @@ public class ScoreUI : MonoBehaviour
 
     string FormatTime(float seconds){
         if(seconds < 60) return $"{Mathf.FloorToInt(seconds)}s";
-        else if(seconds < 3600){
-            int minutes = Mathf.FloorToInt(seconds / 60);
-            int remainingSeconds = Mathf.FloorToInt(seconds % 60);
-            return $"{minutes}m {remainingSeconds}s";
-        }
-        else{
-            int hours = Mathf.FloorToInt(seconds / 3600);
-            int minutes = Mathf.FloorToInt((seconds % 3600) / 60);
-            int remainingSeconds = Mathf.FloorToInt(seconds % 60);
-            return $"{hours}h {minutes}m {remainingSeconds}s";
-        }
-    }
-
-    void DisplayNightTime(){
-        DateTime now = DateTime.Now;
         
-        int displayHour = now.Hour;
-        string ampm = "AM";
+        int minutes = Mathf.FloorToInt(seconds / 60);
+        int remainingSeconds = Mathf.FloorToInt(seconds % 60);
         
-        if(now.Hour >= 22 || now.Hour <= 3) displayHour = now.Hour;
-        else{
-            displayHour = (now.Hour + 12) % 24;
-            if(displayHour < 10) displayHour += 12;
-        }
+        if(minutes < 60) return $"{minutes}m {remainingSeconds}s";
         
-        if(displayHour >= 22){
-            ampm = "PM";
-            displayHour = displayHour == 22 ? 10 : displayHour == 23 ? 11 : displayHour;
-        }
-        else if(displayHour <= 3){
-            ampm = "AM";
-            displayHour = displayHour == 0 ? 12 : displayHour == 1 ? 1 : displayHour == 2 ? 2 : 3;
-        }
-        
-        string dateFormatted = now.ToString("dd-MM-yy");
-        timeText.Text = $"({dateFormatted}) {displayHour:D2}:{now.Minute:D2}:{now.Second:D2} {ampm}";
+        int hours = Mathf.FloorToInt(minutes / 60);
+        int remainingMinutes = minutes % 60;
+        return $"{hours}h {remainingMinutes}m {remainingSeconds}s";
     }
 
     public void DisplayScore(){
@@ -168,19 +170,12 @@ public class ScoreUI : MonoBehaviour
     IEnumerator ScoreDisplaySequence(){
         int carsPassed = gm.carPassed;
         int carsCollided = gm.carCollided;
-        float shiftTime = gm.GetCurrentShiftTime();
-        float greenWaveMultiplier = gm.GetGreenWaveMultiplier();
-        int penaltyPerCrash = gm.GetOopsiePenaltyPerCrash();
-        int baseMoneyMultiplier = 3;
-        
-        int baseScore = carsPassed * 10;
-        int timeBonus = Mathf.FloorToInt(shiftTime / 2f);
-        int greenWaveBonus = Mathf.RoundToInt(carsPassed * greenWaveMultiplier);
-        int penalty = carsCollided * penaltyPerCrash;
-        int finalScore = baseScore + timeBonus + greenWaveBonus - penalty;
-        finalScore = Mathf.Max(0, finalScore);
-        int finalPrize = finalScore * baseMoneyMultiplier;
-        
+        float shiftTime = gm.shiftTime;
+
+        int finalScore = result.finalScore;
+        int finalPrize = result.finalPrize;
+        int passedBonus = result.passedBonus;
+        int totalPenalty = result.totalPenalty;        
         yield return StartCoroutine(AnimatePop(scorePanel, originalScorePanelScale));
         
         //STEP 1: Elapsed Time
@@ -199,22 +194,20 @@ public class ScoreUI : MonoBehaviour
         yield return new WaitForSeconds(sequenceDelay);
         
         //STEP 4: Bonus Score Block
-        bonusScoreText.Text = $"+{timeBonus + greenWaveBonus}";
+        bonusScoreText.Text = $"+{passedBonus}";
         yield return StartCoroutine(ActivateAndPop(bonusScoreBlock));
         yield return new WaitForSeconds(sequenceDelay);
         
-        int withBonuses = baseScore + timeBonus + greenWaveBonus;
-        baseScoreText.Text = $"[{withBonuses}]";
+        baseScoreText.Text = $"[{finalScore + totalPenalty}]";
         yield return StartCoroutine(ShakeBaseScore());
         yield return new WaitForSeconds(sequenceDelay);
         
         //STEP 5: Deduction Score Block (Penalty)
-        deductionScoreText.Text = $"-{penalty}";
+        deductionScoreText.Text = $"-{totalPenalty}";
         yield return StartCoroutine(ActivateAndPop(deductionScoreBlock));
         yield return new WaitForSeconds(sequenceDelay);
         
-        int afterPenalty = withBonuses - penalty;
-        baseScoreText.Text = $"[{afterPenalty}]";
+        baseScoreText.Text = $"[{finalScore}]";
         yield return StartCoroutine(ShakeBaseScore());
         yield return new WaitForSeconds(sequenceDelay);
         
@@ -233,13 +226,17 @@ public class ScoreUI : MonoBehaviour
         EnableDisplay(false);
         
         currentAnimation = null;
-        HUDUI.Instance.ShowAllMenuUI();
-        GameManager.Instance.ResetState();
+        
+        if(HUDUI.Instance != null) HUDUI.Instance.ShowAllMenuUI();
+        if(GameManager.Instance != null) GameManager.Instance.ResetState();
     }
 
     void CheckBestScore(){
+        if(gm == null) return;
+        
         int bestScore = SaveManager.GetBestScore();
-        int currentScore = gm.GetFinalScore();
+        int currentScore = result.finalScore;
+        
         if(bestScore < currentScore) SaveManager.SaveBestScore(currentScore); 
     }
 
@@ -287,6 +284,7 @@ public class ScoreUI : MonoBehaviour
         if(block == null) yield break;
         
         block.gameObject.SetActive(true);
+        if(!originalBlockScales.ContainsKey(block)) originalBlockScales[block] = Vector3.one;
         
         Vector3 originalScale = originalBlockScales[block];
         block.transform.localScale = Vector3.zero;
@@ -329,11 +327,15 @@ public class ScoreUI : MonoBehaviour
     }
 
     void EnableDisplay(bool value){
-        scorePanel.gameObject.SetActive(value);
+        if(scorePanel != null) scorePanel.gameObject.SetActive(value);
+        
         if(!value && currentAnimation != null){
             StopCoroutine(currentAnimation);
             currentAnimation = null;
             DisableAllBlocks();
         }
     }
+
+    public void SetBaseMoneyMultiplier(float value) => baseMoneyMultiplier = value;
+    public void SetScoreResult(ScoreCalculator.ScoreResult value) => result = value; 
 }

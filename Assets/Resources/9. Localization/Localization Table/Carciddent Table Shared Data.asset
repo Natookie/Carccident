@@ -19,20 +19,20 @@ MonoBehaviour:
     m_Key: Menu.Start
     m_Metadata:
       m_Items: []
-  - m_Id: 158876160000
-    m_Key: Menu.Budget
+  - m_Id: 1882204839538688
+    m_Key: Menu.Monitoring
     m_Metadata:
       m_Items: []
   - m_Id: 1873573893042178
     m_Key: Menu.Upgrade
     m_Metadata:
       m_Items: []
-  - m_Id: 1873573893042179
-    m_Key: Menu.Status
+  - m_Id: 7324281314856960
+    m_Key: Menu.StatusOnline
     m_Metadata:
       m_Items: []
-  - m_Id: 1873573893042180
-    m_Key: Menu.Guide
+  - m_Id: 7333644867850240
+    m_Key: Menu.StatusDying
     m_Metadata:
       m_Items: []
   - m_Id: 1873573893042181
@@ -47,36 +47,12 @@ MonoBehaviour:
     m_Key: Menu.Alert
     m_Metadata:
       m_Items: []
-  - m_Id: 1873573893042184
-    m_Key: Menu.ShiftAccidents
+  - m_Id: 1888509734088704
+    m_Key: Menu.Prologue
     m_Metadata:
       m_Items: []
-  - m_Id: 1873573893042185
-    m_Key: Menu.ShiftStress
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1873573893042186
-    m_Key: Menu.CarsPassed
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1873758085902336
-    m_Key: Score.Second
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1877603910348800
-    m_Key: Traffic.North
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1878011055632384
-    m_Key: Upgrade.Stamina
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1878309165789184
-    m_Key: Upgrade.Endurance
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1878476354940928
-    m_Key: Upgrdae.Charisma
+  - m_Id: 7290746428313600
+    m_Key: Menu.Conjunction
     m_Metadata:
       m_Items: []
   - m_Id: 1878870829232128
@@ -87,112 +63,96 @@ MonoBehaviour:
     m_Key: Header.Configuration
     m_Metadata:
       m_Items: []
-  - m_Id: 1879371289391104
-    m_Key: Header.Overview
+  - m_Id: 7289502448078848
+    m_Key: ProfileLabel.Version
     m_Metadata:
       m_Items: []
-  - m_Id: 1879644716068864
-    m_Key: Score.Journal
+  - m_Id: 7289502515187712
+    m_Key: ProfileLabel.Name
     m_Metadata:
       m_Items: []
-  - m_Id: 1879859158249472
-    m_Key: Label.Version
+  - m_Id: 7289502515187713
+    m_Key: ProfileLabel.Age
     m_Metadata:
       m_Items: []
-  - m_Id: 1880049307021312
-    m_Key: Label.Name
+  - m_Id: 7289502515187714
+    m_Key: ProfileValue.Days
     m_Metadata:
       m_Items: []
-  - m_Id: 1880177514311680
-    m_Key: Label.Age
+  - m_Id: 7289502515187715
+    m_Key: Setting.Graphic
     m_Metadata:
       m_Items: []
-  - m_Id: 1880569690124288
-    m_Key: Label.Comingsoon
+  - m_Id: 7289502515187716
+    m_Key: Setting.Volume
     m_Metadata:
       m_Items: []
-  - m_Id: 1880694323867648
-    m_Key: Label.Languange
+  - m_Id: 7289502515187717
+    m_Key: Setting.Languange
     m_Metadata:
       m_Items: []
-  - m_Id: 1881085996363776
-    m_Key: Label.Collided
+  - m_Id: 7289502515187718
+    m_Key: UpgradeName.Sleepy
     m_Metadata:
       m_Items: []
-  - m_Id: 1881288518332416
-    m_Key: Label.Passed
+  - m_Id: 7289502515187719
+    m_Key: UpgradeName.Oopsie
     m_Metadata:
       m_Items: []
-  - m_Id: 1881644325335040
-    m_Key: Label.Graphic
+  - m_Id: 7289502515187720
+    m_Key: UpgradeName.Green
     m_Metadata:
       m_Items: []
-  - m_Id: 2130660735176704
-    m_Key: Label.Volume
+  - m_Id: 7289502515187721
+    m_Key: UpgradeEffect.Sleepy
     m_Metadata:
       m_Items: []
-  - m_Id: 1881835912753152
-    m_Key: Live.Live
+  - m_Id: 7289502515187722
+    m_Key: UpgradeEffect.Oopsie
     m_Metadata:
       m_Items: []
-  - m_Id: 1882204839538688
-    m_Key: Menu.Monitoring
+  - m_Id: 7289502515187723
+    m_Key: UpgradeEffect.Green
     m_Metadata:
       m_Items: []
-  - m_Id: 1883120237998080
-    m_Key: Name.Sleepy
+  - m_Id: 7289502515187724
+    m_Key: UpgradeQuote.Sleepy
     m_Metadata:
       m_Items: []
-  - m_Id: 1883591690350592
-    m_Key: Name.Oopsie
+  - m_Id: 7289502515187725
+    m_Key: UpgradeQuote.Oopsie
     m_Metadata:
       m_Items: []
-  - m_Id: 1884021791059968
-    m_Key: Name.Green
+  - m_Id: 7289502515187726
+    m_Key: UpgradeQuote.Green
     m_Metadata:
       m_Items: []
-  - m_Id: 1884423408250880
-    m_Key: Quote.WatchingCars
+  - m_Id: 7289502515187727
+    m_Key: Score.Elapsed
     m_Metadata:
       m_Items: []
-  - m_Id: 1884685904572416
-    m_Key: Quote.ThatCollision
+  - m_Id: 7289502515187728
+    m_Key: Score.CarsCrashed
     m_Metadata:
       m_Items: []
-  - m_Id: 1884813646295040
-    m_Key: Quote.MaybeIf
+  - m_Id: 7289502515187729
+    m_Key: Score.CarsPassed
     m_Metadata:
       m_Items: []
-  - m_Id: 1885472621785088
-    m_Key: Text.Formula
+  - m_Id: 7289502515187730
+    m_Key: Score.Formula
     m_Metadata:
       m_Items: []
-  - m_Id: 1885775060463616
-    m_Key: Text.Deduction
+  - m_Id: 7289502515187731
+    m_Key: Score.Deduction
     m_Metadata:
       m_Items: []
-  - m_Id: 1885990228258816
-    m_Key: Text.Elapsed
+  - m_Id: 7289502515187732
+    m_Key: Score.Multiplier
     m_Metadata:
       m_Items: []
-  - m_Id: 1886360644022272
-    m_Key: Text.HighScore
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1887174754234368
-    m_Key: Text.Multiplier
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1887689382752256
-    m_Key: Menu.CarsCrashed
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1887967972618240
-    m_Key: Text.Upgrade
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1888509734088704
-    m_Key: Menu.Prologue
+  - m_Id: 7289502515187733
+    m_Key: Score.Bonus
     m_Metadata:
       m_Items: []
   - m_Id: 1888679053946880
@@ -219,14 +179,6 @@ MonoBehaviour:
     m_Key: Prologue.6
     m_Metadata:
       m_Items: []
-  - m_Id: 1890208414625792
-    m_Key: Value.Days
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1890926068428800
-    m_Key: LOG.LOG
-    m_Metadata:
-      m_Items: []
   - m_Id: 2148855349104640
     m_Key: Pause.Pause
     m_Metadata:
@@ -237,6 +189,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 2148855374270465
     m_Key: Pause.End
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1879644716068864
+    m_Key: Score.Journal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7289502515187734
+    m_Key: Score.Log
     m_Metadata:
       m_Items: []
   m_Metadata:

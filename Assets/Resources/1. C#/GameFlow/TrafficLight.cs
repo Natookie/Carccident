@@ -41,6 +41,7 @@ public class TrafficLight : MonoBehaviour
 
         SetStraightRed();
         SetRightRed();
+        SetLayer(gameObject, 11);
     }
 
     #region STRAIGHT
@@ -81,6 +82,11 @@ public class TrafficLight : MonoBehaviour
     public bool IsRightGreen() => isRightGreen;
     public int GetLightID() => lightID;
     public RoadDirection GetRoadDirection() => roadDirection;
+    public void SetLayer(GameObject obj, int index){
+        if(obj == null) return; 
+        obj.layer = index; 
+        foreach(Transform child in obj.transform) SetLayer(child.gameObject, index);
+    }
 
     void OnMouseDown(){
         if(!GameManager.Instance.isGameInitialized || GameManager.Instance.isGameOver) return;

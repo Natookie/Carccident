@@ -319,7 +319,7 @@ public class CarManager : MonoBehaviour
     
     float GetCurrentSpawnInterval(){
         if(GameManager.Instance != null){
-            float gameTime = GameManager.Instance.GetCurrentShiftTime();
+            float gameTime = GameManager.Instance.shiftTime;
             float multiplier = spawnRateCurve.Evaluate(gameTime);
             return Mathf.Max(minSpawnInterval, baseSpawnInterval * multiplier);
         }
@@ -328,7 +328,7 @@ public class CarManager : MonoBehaviour
     
     int GetCurrentMaxCars(){
         if(GameManager.Instance != null){
-            float gameTime = GameManager.Instance.GetCurrentShiftTime();
+            float gameTime = GameManager.Instance.shiftTime;
             float multiplier = maxCarsCurve.Evaluate(gameTime);
             return Mathf.CeilToInt(maxActiveCars * multiplier);
         }
@@ -337,7 +337,7 @@ public class CarManager : MonoBehaviour
     
     float GetCurrentEmergencyChance(){
         if(GameManager.Instance != null && emergencySpawnCurve != null && emergencySpawnCurve.keys.Length > 0){
-            float gameTime = GameManager.Instance.GetCurrentShiftTime();
+            float gameTime = GameManager.Instance.shiftTime;
             float multiplier = emergencySpawnCurve.Evaluate(gameTime);
             return Mathf.Clamp(emergencySpawnChance * multiplier, 0f, 100f);
         }

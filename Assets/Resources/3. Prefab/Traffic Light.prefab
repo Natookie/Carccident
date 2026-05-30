@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7192875285621201237}
   - component: {fileID: 631458577726014087}
   - component: {fileID: 444599544624163883}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: Traffic Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrafficLight
   straightLightRenderer: {fileID: 8601674521082976002}
   rightLightRenderer: {fileID: 384711289064819693}
-  lightID: 0
+  lightID: 3
 --- !u!1 &4181601747024480185
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 5062654189229179813}
   - component: {fileID: 257084695492372271}
   - component: {fileID: 8601674521082976002}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 3523027955590070788}
   - component: {fileID: 525677435958103457}
   - component: {fileID: 2355210661176834411}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: lampu lalu lintas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 640967561118950381}
   - component: {fileID: 2274159678188860674}
   - component: {fileID: 384711289064819693}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}

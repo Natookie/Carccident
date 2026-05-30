@@ -1,3 +1,5 @@
+#pragma warning disable 0414
+
 using UnityEngine;
 using System.Collections.Generic;
 using NaughtyAttributes;
@@ -310,20 +312,6 @@ public class RoadSpawnerManager : MonoBehaviour
         GameObject turnPoint = new GameObject(name);
         turnPoint.transform.SetParent(parent);
         turnPoint.transform.position = position;
-        
-        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        visual.name = "Visual";
-        visual.transform.SetParent(turnPoint.transform);
-        visual.transform.localScale = Vector3.one * 0.4f;
-        visual.transform.localPosition = Vector3.up * 0.3f;
-        DestroyImmediate(visual.GetComponent<Collider>());
-        
-        Renderer renderer = visual.GetComponent<Renderer>();
-        if(renderer != null){
-            Material mat = new Material(Shader.Find("Standard"));
-            mat.color = turnPointColor;
-            renderer.material = mat;
-        }
         return turnPoint.transform;
     }
     
@@ -595,3 +583,5 @@ public class RoadSpawnerManager : MonoBehaviour
     }
     #endregion
 }
+
+#pragma warning restore 0414

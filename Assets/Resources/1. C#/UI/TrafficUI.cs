@@ -80,31 +80,30 @@ public class TrafficUI : MonoBehaviour
         };
     }
 
-    void Start(){
-        HidePrompt();
-    }
-
+    void Start() => HidePrompt();
     void OnPanelPressed(Gesture.OnPress evt) => shouldBeActive = true;
 
     void Update(){
         if(!panel.gameObject.activeSelf) return;
-
-        if(Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0)){
-            StartCoroutine(DelayedHidePrompt());
-        }
+        if(Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0)) StartCoroutine(DelayedHidePrompt());
     }
 
     public void ShowPrompt(TrafficLight tl){
+        if(tl != selectedTrafficLight) DisableOutline();
+        else return;
+
         selectedTrafficLight = tl;
         panel.gameObject.SetActive(true);
 
         shouldBeActive = true;
         TrafficLightManager.LaneStatus laneStatus = TrafficLightManager.Instance.GetLaneStatus(tl.GetRoadDirection());
         UpdateUI(laneStatus);
+        EnableOutline();
     }
 
     public void HidePrompt(){
         panel.gameObject.SetActive(false);
+        DisableOutline();
         selectedTrafficLight = null;
     }
 
@@ -121,7 +120,7 @@ public class TrafficUI : MonoBehaviour
         if(selectedTrafficLight == null) return;
         
         TrafficLight.RoadDirection direction = selectedTrafficLight.GetRoadDirection();
-        trafficDirection.Text = $"{direction.ToString()} Road";
+        trafficDirection.Text = $"{direction} Road";
         
         if(destinationMap.TryGetValue(direction, out var destinations)){
             for(int i = 0; i < destinations.Length && i < destinationTexts.Length; i++){
@@ -177,6 +176,9 @@ public class TrafficUI : MonoBehaviour
             }
         }
     }
+
+    void DisableOutline() => selectedTrafficLight?.SetLayer(selectedTrafficLight.gameObject, 11);
+    void EnableOutline() => selectedTrafficLight?.SetLayer(selectedTrafficLight.gameObject,12);
 
     void OnStraightButtonPressed(Gesture.OnPress evt){
         UIBlock2D pressedButton = evt.Receiver as UIBlock2D;
