@@ -70,7 +70,7 @@ public class TrafficLightManager : MonoBehaviour
     }
 
     public void OnTrafficLightClicked(TrafficLight clickedLight, ClickType clickType, bool turnGreen){
-        if(isProcessing) return;
+        if(isProcessing) return;  
 
         TrafficLight.RoadDirection clickedDirection = clickedLight.GetRoadDirection();
         
@@ -115,7 +115,7 @@ public class TrafficLightManager : MonoBehaviour
         LaneStatus lane = GetLaneStatus(direction);
         TrafficLight targetLight = GetLightByDirection(direction);
         if(lane == null || targetLight == null) return;
-        
+
         if(lane.straightActive) targetLight.SetStraightGreen();
         else targetLight.SetStraightRed();
         

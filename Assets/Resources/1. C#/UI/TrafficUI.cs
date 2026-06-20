@@ -15,9 +15,11 @@ public class TrafficUI : MonoBehaviour
     [SerializeField] private Sprite[] trafficSprite = new Sprite[3];
     [Space(10)]
     [SerializeField] private UIBlock2D straightBlock;
+    [SerializeField] private UIBlock2D straightArrow;
     [SerializeField] private UIBlock2D[] straightIndicators = new UIBlock2D[3];
     [Space(10)]
     [SerializeField] private UIBlock2D rightBlock;
+    [SerializeField] private UIBlock2D rightArrow;
     [SerializeField] private UIBlock2D[] rightIndicators = new UIBlock2D[3];
 
     public enum TrafficColor{Green, Yellow, Red};
@@ -57,6 +59,10 @@ public class TrafficUI : MonoBehaviour
         
         foreach(UIBlock2D block in straightIndicators) block.AddGestureHandler<Gesture.OnPress>(OnStraightButtonPressed);
         foreach(UIBlock2D block in rightIndicators) block.AddGestureHandler<Gesture.OnPress>(OnRightButtonPressed);
+
+        straightArrow.AddGestureHandler<Gesture.OnPress>(OnStraightArrowPressed);
+        rightArrow.AddGestureHandler<Gesture.OnPress>(OnRightArrowPressed);
+
         panel.AddGestureHandler<Gesture.OnPress>(OnPanelPressed);
     }
 
@@ -199,6 +205,14 @@ public class TrafficUI : MonoBehaviour
         TrafficLightManager.Instance.OnTrafficLightClicked(selectedTrafficLight, clickType, isGreen);
     }
 
+    void OnStraightArrowPressed(Gesture.OnPress evt){
+        clickType = TrafficLightManager.ClickType.Straight;
+        TrafficLightManager.LaneStatus laneStatus = TrafficLightManager.Instance.GetLaneStatus(selectedTrafficLight.GetRoadDirection());
+        bool isGreen = laneStatus.straightActive;
+
+        TrafficLightManager.Instance.OnTrafficLightClicked(selectedTrafficLight, clickType, !isGreen);
+    }
+
     void OnRightButtonPressed(Gesture.OnPress evt){
         UIBlock2D pressedButton = evt.Receiver as UIBlock2D;
         if(pressedButton == null) return;
@@ -216,5 +230,13 @@ public class TrafficUI : MonoBehaviour
 
         clickType = TrafficLightManager.ClickType.Right;
         TrafficLightManager.Instance.OnTrafficLightClicked(selectedTrafficLight, clickType, isGreen);
+    }
+
+    void OnRightArrowPressed(Gesture.OnPress evt){
+        clickType = TrafficLightManager.ClickType.Right;
+        TrafficLightManager.LaneStatus laneStatus = TrafficLightManager.Instance.GetLaneStatus(selectedTrafficLight.GetRoadDirection());
+        bool isGreen = laneStatus.rightActive;
+
+        TrafficLightManager.Instance.OnTrafficLightClicked(selectedTrafficLight, clickType, !isGreen);
     }
 }

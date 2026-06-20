@@ -5563,7 +5563,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: -105.11718
+        Raw: -20
         Type: 0
       Y:
         Raw: 0
@@ -9260,6 +9260,7 @@ GameObject:
   - component: {fileID: 205370961}
   - component: {fileID: 205370963}
   - component: {fileID: 205370962}
+  - component: {fileID: 205370964}
   m_Layer: 5
   m_Name: Traffic Arrow
   m_TagString: Untagged
@@ -9541,6 +9542,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9117b6d975111c47b064a4373cc67ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Nova::Nova.UIBlockActivator
+--- !u!114 &205370964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205370960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0e5f112b0a05b43b4ba50233a47743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nova::Nova.Interactable
+  ObstructDrags: 0
+  DragThreshold: 1
+  LowAccuracyDragThreshold: 30
+  ClickBehavior: 0
+  navigable: 1
+  onSelect: 0
+  autoSelect: 0
+  Navigation:
+    Left:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Right:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Down:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Up:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Forward:
+      Type: 1
+      Fallback: 1
+      Target: {fileID: 0}
+    Back:
+      Type: 1
+      Fallback: 1
+      Target: {fileID: 0}
+  draggable:
+    X: 0
+    Y: 0
+    Z: 0
+  GestureSpace: 0
 --- !u!1 &211126280
 GameObject:
   m_ObjectHideFlags: 0
@@ -10190,7 +10240,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 18.150002
+        Raw: 0
         Type: 0
       Z:
         Raw: 0
@@ -13635,7 +13685,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 63.500004
+        Raw: 31
         Type: 0
       Z:
         Raw: 0
@@ -14050,7 +14100,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 48.28
+        Raw: 28
         Type: 0
       Z:
         Raw: 0
@@ -14631,7 +14681,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 112.685165
+        Raw: 20
         Type: 0
       Y:
         Raw: 0
@@ -17426,7 +17476,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 276.52
+        Raw: 94
         Type: 0
       Z:
         Raw: 0
@@ -24690,11 +24740,13 @@ MonoBehaviour:
   - {fileID: 1612944654, guid: 765a6d6327f7f5b40ab3b5ae41fa5509, type: 3}
   - {fileID: 1062213972, guid: 765a6d6327f7f5b40ab3b5ae41fa5509, type: 3}
   straightBlock: {fileID: 451096033}
+  straightArrow: {fileID: 205370962}
   straightIndicators:
   - {fileID: 2057556019}
   - {fileID: 2064748856}
   - {fileID: 1917697313}
   rightBlock: {fileID: 738939253}
+  rightArrow: {fileID: 1898365332}
   rightIndicators:
   - {fileID: 1553708316}
   - {fileID: 1735247640}
@@ -38864,7 +38916,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 115.5
+        Raw: 44
         Type: 0
       Z:
         Raw: 0
@@ -41507,7 +41559,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 96
+        Raw: 44
         Type: 0
       Z:
         Raw: 0
@@ -41907,7 +41959,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 115.5
+        Raw: 44
         Type: 0
       Z:
         Raw: 0
@@ -53647,7 +53699,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 410.91998
+        Raw: 127
         Type: 0
       Z:
         Raw: -0
@@ -54696,7 +54748,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 545.31995
+        Raw: 160
         Type: 0
       Z:
         Raw: 0
@@ -61115,7 +61167,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -41.5, y: -87.75, z: -41.5, w: -87.75}
+  m_margin: {x: -41.5, y: -52, z: -41.5, w: -52}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -67233,7 +67285,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 248
+        Raw: 92
         Type: 0
       Y:
         Raw: 0
@@ -68086,7 +68138,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 63.500004
+        Raw: 31
         Type: 0
       Z:
         Raw: 0
@@ -68816,7 +68868,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: -112.29602
+        Raw: -55
         Type: 0
       Y:
         Raw: 0
@@ -72430,7 +72482,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 162.4
+        Raw: 61
         Type: 0
       Z:
         Raw: 0
@@ -76118,7 +76170,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: -30.250004
+        Raw: 0
         Type: 0
       Z:
         Raw: 0
@@ -76658,7 +76710,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 333
+        Raw: 138
         Type: 0
       Y:
         Raw: 0
@@ -80953,7 +81005,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1735391490
 Transform:
   m_ObjectHideFlags: 0
@@ -87614,7 +87666,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 85
+        Raw: 46
         Type: 0
       Y:
         Raw: 0
@@ -88253,7 +88305,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -41.5, y: -97.5, z: -41.5, w: -97.5}
+  m_margin: {x: -41.5, y: -52, z: -41.5, w: -52}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -89524,6 +89576,7 @@ GameObject:
   - component: {fileID: 1898365331}
   - component: {fileID: 1898365333}
   - component: {fileID: 1898365332}
+  - component: {fileID: 1898365334}
   m_Layer: 5
   m_Name: Traffic Arrow
   m_TagString: Untagged
@@ -89805,6 +89858,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9117b6d975111c47b064a4373cc67ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Nova::Nova.UIBlockActivator
+--- !u!114 &1898365334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898365330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0e5f112b0a05b43b4ba50233a47743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nova::Nova.Interactable
+  ObstructDrags: 0
+  DragThreshold: 1
+  LowAccuracyDragThreshold: 30
+  ClickBehavior: 0
+  navigable: 1
+  onSelect: 0
+  autoSelect: 0
+  Navigation:
+    Left:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Right:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Down:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Up:
+      Type: 0
+      Fallback: 0
+      Target: {fileID: 0}
+    Forward:
+      Type: 1
+      Fallback: 1
+      Target: {fileID: 0}
+    Back:
+      Type: 1
+      Fallback: 1
+      Target: {fileID: 0}
+  draggable:
+    X: 0
+    Y: 0
+    Z: 0
+  GestureSpace: 0
 --- !u!114 &1901807567 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 444599544624163883, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
@@ -90524,7 +90626,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1906948923
 Transform:
   m_ObjectHideFlags: 0
@@ -90534,7 +90636,7 @@ Transform:
   m_GameObject: {fileID: 1906948922}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -240.30151, z: 0}
+  m_LocalPosition: {x: 0, y: -240.18811, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -95678,7 +95780,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -41.5, y: -97.5, z: -41.5, w: -97.5}
+  m_margin: {x: -41.5, y: -52, z: -41.5, w: -52}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -96830,7 +96932,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: -200.49998
+        Raw: -62.5
         Type: 0
       Y:
         Raw: 0
@@ -98802,7 +98904,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 659.43994
+        Raw: 193
         Type: 0
       Z:
         Raw: -0
@@ -100138,7 +100240,7 @@ MonoBehaviour:
         Type: 0
     Position:
       X:
-        Raw: 197.50003
+        Raw: 62.5
         Type: 0
       Y:
         Raw: 0
@@ -103433,7 +103535,7 @@ MonoBehaviour:
         Raw: 0
         Type: 0
       Y:
-        Raw: 63.500004
+        Raw: 31
         Type: 0
       Z:
         Raw: 0
