@@ -6385,6 +6385,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 248351354}
     m_Modifications:
+    - target: {fileID: 444599544624163883, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
+      propertyPath: lightID
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2591913814260916307, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
       propertyPath: m_Name
       value: East
@@ -10902,7 +10906,7 @@ GameObject:
   m_Layer: 0
   m_Name: North_Straight
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -18698,7 +18702,7 @@ GameObject:
   m_Layer: 0
   m_Name: South_Straight
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -21631,7 +21635,7 @@ GameObject:
   m_Layer: 0
   m_Name: East_RightTurn
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -21658,6 +21662,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 248351354}
     m_Modifications:
+    - target: {fileID: 444599544624163883, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
+      propertyPath: lightID
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2591913814260916307, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
       propertyPath: m_Name
       value: West
@@ -24763,7 +24771,7 @@ GameObject:
   m_Layer: 0
   m_Name: East_Straight
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -45596,7 +45604,7 @@ GameObject:
   m_Layer: 0
   m_Name: South_RightTurn
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -55008,7 +55016,7 @@ GameObject:
   m_Layer: 0
   m_Name: West_RightTurn
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -57601,7 +57609,7 @@ GameObject:
   m_Layer: 0
   m_Name: North_RightTurn
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -60940,6 +60948,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 248351354}
     m_Modifications:
+    - target: {fileID: 444599544624163883, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
+      propertyPath: lightID
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2591913814260916307, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
       propertyPath: m_Name
       value: North
@@ -69421,6 +69433,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 248351354}
     m_Modifications:
+    - target: {fileID: 444599544624163883, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
+      propertyPath: lightID
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2591913814260916307, guid: eb02fe47c3d4ef64582771b99a6b47c0, type: 3}
       propertyPath: m_Name
       value: South
@@ -73172,7 +73188,7 @@ MonoBehaviour:
   emergencyCarPrefabs:
   - {fileID: 9125626020845671584, guid: 2b5500ac2ff28d64990a3c3db89d8d7b, type: 3}
   - {fileID: 3896554768574189988, guid: 2e294c94d9609b349be846d881e35bcc, type: 3}
-  emergencySpawnChance: 0
+  emergencySpawnChance: 15
   carParent: {fileID: 626051860}
   baseSpawnInterval: 1
   minSpawnInterval: 0.25
@@ -76969,7 +76985,7 @@ GameObject:
   m_Layer: 0
   m_Name: West_Straight
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -101828,7 +101844,7 @@ MonoBehaviour:
   zebraStripeColor: {r: 0.9575472, g: 1, b: 0.9898781, a: 1}
   rightTurnOffset: 0.75
   straightOffset: 0.25
-  showGizmos: 0
+  showGizmos: 1
   showTransform: 1
   northTurnPoint: {fileID: 787082961}
   southTurnPoint: {fileID: 1338700101}
@@ -101853,12 +101869,12 @@ MonoBehaviour:
   showIntersectionArea: 1
   showTurnPoints: 1
   showStopAreas: 1
-  roadColor: {r: 1, g: 0.028301895, b: 0.911935, a: 0.23921569}
+  roadColor: {r: 1, g: 0.028301895, b: 0.911935, a: 0.27450982}
   dividerColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   rightTurnColor: {r: 0, g: 1, b: 1, a: 1}
   straightColor: {r: 0, g: 0, b: 1, a: 1}
   intersectionColor: {r: 1, g: 0.5, b: 0, a: 1}
-  turnPointColor: {r: 1, g: 0, b: 1, a: 1}
+  turnPointColor: {r: 1, g: 0.19702503, b: 0, a: 1}
 --- !u!1 &2117359205
 GameObject:
   m_ObjectHideFlags: 0
