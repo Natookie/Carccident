@@ -2,6 +2,26 @@
 
 Carccident is a Unity project for a traffic-management / road-safety gameplay loop built around an intersection, traffic lights, car spawning, scoring, upgrades, and persistence. The project configuration and scripts indicate a game prototype focused on controlling traffic flow and avoiding collisions while earning money and progressing through upgrades.
 
+<table>
+  <tr>
+    <td><img src="https://img.itch.zone/aW1hZ2UvNDU4MTkwNC8yNzI5ODA5Ni5wbmc=/original/ThtJ6w.png" width="100%"></td>
+    <td><img src="https://img.itch.zone/aW1hZ2UvNDU4MTkwNC8yNzI5ODA5NC5wbmc=/original/Nif5K1.png" width="100%"></td>
+    <td><img src="https://img.itch.zone/aW1hZ2UvNDU4MTkwNC8yNzI5ODEwMi5wbmc=/original/C9Q1BV.png" width="100%"></td>
+  </tr>
+</table>
+
+<br><br>
+[![Play on itch.io](https://img.shields.io/badge/Play%20on-itch.io-fa5c5c?logo=itchdotio&logoColor=white)](https://natookie.itch.io/carccident)
+
+## Contributors
+
+| Contributor | Role | Contribution |
+|---|---|---|
+| **Natanael Kevin Kurniawan** | Programmer & UI/UX Designer | Sole programmer responsible for the game's core gameplay systems and interaction mechanics. Designed and implemented the game's UI/UX, including interface structure, visual presentation, and player-facing interactions. |
+| **Erika Gabriela** | 3D Artist | Created and developed the game's 3D environment, establishing the visual foundation and atmosphere of the game world. |
+| **Dave Franklin Lewandi** | 2D Artist | Created and refined the game's 2D UI iconography and supporting visual assets, maintaining consistency across the interface. |
+| **Delvin Susilo** | Game Designer | Shaped the game's overall design direction, gameplay concept, and player experience. Also contributed supporting assets, including audio and typography. |
+
 ## Features
 
 - Four-direction road intersection with lane-based spawning and turn logic
@@ -66,24 +86,6 @@ The project is organized around a few core systems:
 - A large portion of the project is organized under Assets/Resources/1. C# by system (Manager, GameFlow, Pedestrian, UI, Camera, Localization).
 - Many editor convenience features are present, including debug controls and NaughtyAttributes-based inspector helpers.
 - The repository contains third-party/editor packages and prefabs under Assets/ and Packages/; these are part of the project assets rather than a separate backend service.
-
-## Contributors
-
-### Natanael Kevin Kurniawan (Programmer & UI/UX Designer)
-
-Sole programmer responsible for the game's core gameplay systems and interaction mechanics. Also designed and implemented the game's UI/UX, including its interface structure, visual presentation, and player-facing interactions.
-
-### Erika Gabriela (3D Artist)
-
-Responsible for creating and developing the game's 3D environment, establishing the visual foundation and atmosphere of the game world.
-
-### Dave Franklin Lewandi (2D Artist)
-
-Created and refined the game's 2D UI iconography and supporting visual assets, helping maintain consistency across the interface.
-
-### Delvin Susilo (Game Designer)
-
-Shaped the game's overall design direction, gameplay concept, and player experience. Also contributed supporting assets, including audio and typography.
 
 ## Time Spent: 7 Days / ~120 Work Hours
 
