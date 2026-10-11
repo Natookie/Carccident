@@ -22,6 +22,8 @@ Carccident is a Unity project for a traffic-management / road-safety gameplay lo
 | **Dave Franklin Lewandi** | 2D Artist | Created and refined the game's 2D UI iconography and supporting visual assets, maintaining consistency across the interface. |
 | **Delvin Susilo** | Game Designer | Shaped the game's overall design direction, gameplay concept, and player experience. Also contributed supporting assets, including audio and typography. |
 
+## Time Spent: 7 Days / ~120 Work Hours
+
 ## Features
 
 - Four-direction road intersection with lane-based spawning and turn logic
@@ -57,11 +59,11 @@ Carccident is a Unity project for a traffic-management / road-safety gameplay lo
 ## Project structure
 
 - Assets/Scenes — Unity scenes including the main gameplay scene and other scene variants
-- Assets/Resources/1. C# — main gameplay and management logic
-- Assets/Resources/2. Art — visual art and UI assets
-- Assets/Resources/3. Prefab — prefab assets
-- Assets/Resources/4. Audio — sound assets
-- Assets/Resources/5. Data — data/config assets
+- Assets/_Projects/1. C# Scripts — main gameplay and management logic
+- Assets/_Projects/2. Art — visual art and UI assets
+- Assets/_Projects/3. Prefab — prefab assets
+- Assets/_Projects/4. Audio — sound assets
+- Assets/_Projects/5. Data — data/config assets
 - Assets/Settings — project settings and config assets
 - Packages/ — Unity package dependencies such as URP, Input System, localization, and editor utilities
 - ProjectSettings/ — Unity project settings and version metadata
@@ -83,10 +85,8 @@ The project is organized around a few core systems:
 ## Development notes
 
 - The code uses Unity's built-in MonoBehaviour workflow, with many gameplay systems implemented as scene-attached components.
-- A large portion of the project is organized under Assets/Resources/1. C# by system (Manager, GameFlow, Pedestrian, UI, Camera, Localization).
+- A large portion of the project is organized under Assets/_Projects/1. C# Scripts by system (Manager, GameFlow, Pedestrian, UI, Camera, Localization).
 - Many editor convenience features are present, including debug controls and NaughtyAttributes-based inspector helpers.
 - The repository contains third-party/editor packages and prefabs under Assets/ and Packages/; these are part of the project assets rather than a separate backend service.
-
-## Time Spent: 7 Days / ~120 Work Hours
 
 
